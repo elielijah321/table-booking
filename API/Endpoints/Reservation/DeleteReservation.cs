@@ -7,14 +7,14 @@ using Microsoft.Extensions.Logging;
 
 namespace Project.Function
 {
-    public static class DeletePerson
+    public static class DeleteReservation
     {
-        [FunctionName("DeletePerson")]
+        [FunctionName("DeleteReservation")]
         public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "DeletePerson/{id}")] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "DeleteReservation/{id}")] HttpRequest req,
             string id, ILogger log)
         {
-            log.LogInformation("DeletePerson function processed a request.");
+            log.LogInformation("DeleteReservation function processed a request.");
 
             // RepositoryWrapper.GetRepo().DeleteDefendant(id);
 

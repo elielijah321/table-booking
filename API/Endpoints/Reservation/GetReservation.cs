@@ -9,12 +9,12 @@ namespace Project.Function
 {
     public static class GetCase
     {
-        [FunctionName("GetPerson")]
+        [FunctionName("GetReservation")]
         public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "GetPerson/{id}")] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "GetReservation/{id}")] HttpRequest req,
             string id, ILogger log)
         {
-            log.LogInformation("GetPerson function processed a request.");
+            log.LogInformation("GetReservation function processed a request.");
 
             var data = RepositoryWrapper.GetRepo().GetPersonById(id);
 

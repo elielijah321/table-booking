@@ -1,16 +1,24 @@
 import { ChangeEvent, useEffect, useState } from 'react'
 import { Button, Form } from 'react-bootstrap';
 import { useParams, useNavigate } from 'react-router-dom';
-import { PersonRequest } from '../../types/People/PersonRequest';
+import { ReservationRequest } from '../../types/Reservation/ReservationRequest';
 import Loading from '../HelperComponents/Loading';
 import { deletePersonById, getPersonById, postPerson } from '../../functions/fetchEntities';
+import MyDatePicker, { MyDatePickerProps } from '../HelperComponents/DatePicker';
 
-function EditPerson() {
+function EditReservation() {
 
     const [hasBeenEdited, setHasBeenEdited] = useState(false);
     const [validated, setValidated] = useState(false);
 
-    const [selectedEntity, setSelectedEntity] = useState<PersonRequest>({} as PersonRequest);
+    const [selectedEntity, setSelectedEntity] = useState<ReservationRequest>({} as ReservationRequest);
+
+    // const [partySizes, setPartySizes] = useState();
+
+
+    const partSizes = ['1 guest', '2 guests'];
+
+
 
 
     const navigate = useNavigate();
@@ -27,19 +35,31 @@ function EditPerson() {
 
 
 
-    const handleNameChange = (event: ChangeEvent<HTMLInputElement>) => {
-        const title = event.target.value;
-        setSelectedEntity({ ...selectedEntity, name: title });
-        setHasBeenEdited(true);
-    };
+    const handleDateChange = (date: Date | null) => {
+        // setSelectedDate(date);
+
+        if (date) {
+            alert(date)
+        //   onDateSelect(date); // Pass the selected date to the parent component
+        }
+      };
+
+    const datePickerProps : MyDatePickerProps = { disabledDates: [new Date(2025, 15, 2)], onDateSelect: handleDateChange }
+
+
+    const handlePartySizeChange = (event: ChangeEvent<HTMLSelectElement>) => {
+        const pc = event.target.value;
+        // setRabbit({ ...rabbit, gender})
+      }
+
 
 
     const handleDelete = async (event: any) => {
         event.preventDefault();
-        if (window.confirm(`Are you sure you want to delete ${selectedEntity.name}`)) {
-            await deletePersonById(selectedEntity.id);
-            navigate('/People', { replace: true });
-        }
+        // if (window.confirm(`Are you sure you want to delete ${selectedEntity.name}`)) {
+        //     await deletePersonById(selectedEntity.id);
+        //     navigate('/People', { replace: true });
+        // }
     };
 
     const handleSubmit = async (event: any) => {
@@ -61,7 +81,7 @@ function EditPerson() {
         <>
             {parsedId === "new" || selectedEntity.id !== undefined ?
                 <div className='page'>
-                    <h1>Edit Person</h1>
+                    <h1>Edit Reservation</h1>
                     <Form noValidate validated={validated} onSubmit={event => handleSubmit(event)}>
 
                         <div className='edit-action-btns'>
@@ -79,15 +99,23 @@ function EditPerson() {
                         </div>
 
                         <div className="margin-top d-flex">
-                            <Form.Group className="mb-3">
-                                <Form.Label>Name</Form.Label>
-                                <Form.Control
-                                    type="text"
-                                    placeholder="Name"
-                                    onChange={handleNameChange}
-                                    value={selectedEntity.name}
-                                    required
-                                />
+
+                            <Form.Group className="mb-3" controlId="formBreed">
+                                <Form.Label className='centered'>Party Size</Form.Label>
+                                <select className="form-select" aria-label="Breed" onChange={handlePartySizeChange}>
+                                {partSizes.map(ps => <option value={ps} >{ps}</option>)}
+                                </select>
+                            </Form.Group>
+
+                            {
+                                MyDatePicker(datePickerProps)
+                            }
+
+                            <Form.Group className="mb-3" controlId="formBreed">
+                                <Form.Label className='centered'>Party Size</Form.Label>
+                                <select className="form-select" aria-label="Breed" onChange={handlePartySizeChange}>
+                                {partSizes.map(ps => <option value={ps} >{ps}</option>)}
+                                </select>
                             </Form.Group>
 
                         </div>
@@ -99,4 +127,4 @@ function EditPerson() {
     );
 }
 
-export default EditPerson;
+export default EditReservation;

@@ -5,14 +5,14 @@ using Project.Function;
 namespace Project.Configuration
 {
 
-    public class PersonConfigurations : IEntityTypeConfiguration<Person>
+    public class ReservationConfigurations : IEntityTypeConfiguration<Reservation>
     {
-        public void Configure(EntityTypeBuilder<Person> builder)
+        public void Configure(EntityTypeBuilder<Reservation> builder)
         {
-            builder.ToTable("Persons", "dbo");
+            builder.ToTable("Reservations", "dbo");
             
             builder.HasKey(e => e.Id)
-                    .HasName("PK__Person");
+                    .HasName("PK__Reservation");
 
             builder.Property(e => e.Id)
                     .HasDefaultValueSql("NEWID()");

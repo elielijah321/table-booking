@@ -13,20 +13,20 @@ using System.Linq;
 
 namespace Project.Function
 {
-    public static class GetAllCases
+    public static class GetAllReservations
     {
-        [FunctionName("GetAllPeople")]
+        [FunctionName("GetAllReservations")]
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequest req,
             ILogger log)
         {
-            log.LogInformation("GetAllPeople function processed a request.");
+            log.LogInformation("GetAllReservations function processed a request.");
 
             var repo = RepositoryWrapper.GetRepo();
 
             string searchTerm = req.Query["searchTerm"].ToString().ToLower();
 
-            List<Person> data = null;
+            List<Reservation> data = null;
 
             if(string.IsNullOrEmpty(searchTerm))
             {

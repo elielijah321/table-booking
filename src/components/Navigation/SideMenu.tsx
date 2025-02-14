@@ -8,8 +8,8 @@ import Home from '../Home';
 
 import ForgotPasswordPage from './Authentication/ForgotPassword';
 import LoginPage from './Authentication/LoginPage';
-import PeoplePage from '../People/PeoplePage';
-import EditCase from '../People/EditPerson';
+import PeoplePage from '../Reservation/PeoplePage';
+import EditReservation from '../Reservation/EditReservation';
 
 const SideMenu: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -23,7 +23,7 @@ const SideMenu: React.FC = () => {
   const menuItems = 
   [
       { name: 'Home', icon: NestBox, path: '/home' },
-      { name: 'People', icon: Money, path: '/People' },
+      { name: 'Reservations', icon: Money, path: '/Reservations' },
   ];
 
   const isAuthenticated = () => {
@@ -61,8 +61,8 @@ const SideMenu: React.FC = () => {
               <Route path="/" element={navigateToPageIfAuthenticated(<Home />)} />
               <Route path="/home" element={navigateToPageIfAuthenticated(<Home />)} />
 
-              <Route path="/People" element={navigateToPageIfAuthenticated(<PeoplePage />)} />
-              <Route path="/Person/:id/edit" element={navigateToPageIfAuthenticated(<EditCase />)} />
+              <Route path="/Reservations" element={navigateToPageIfAuthenticated(<PeoplePage />)} />
+              <Route path="/Reservation/:id/edit" element={navigateToPageIfAuthenticated(<EditReservation />)} />
 
               <Route path="/login" element={<LoginPage />} />
               <Route path="/forgot-password" element={<ForgotPasswordPage />} />

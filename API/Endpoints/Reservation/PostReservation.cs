@@ -11,25 +11,25 @@ using Newtonsoft.Json;
 
 namespace Project.Function
 {
-    public static class PostPerson
+    public static class PostReservation
     {
-        [FunctionName("PostPerson")]
+        [FunctionName("PostReservation")]
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)] HttpRequest req,
             ILogger log)
         {
-            log.LogInformation("PostPerson function processed a request.");
+            log.LogInformation("PostReservation function processed a request.");
 
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            var data = JsonConvert.DeserializeObject<UpdatePersonRequestModel>(requestBody);
+            var data = JsonConvert.DeserializeObject<UpdateReservationRequestModel>(requestBody);
             var repo = RepositoryWrapper.GetRepo();
 
             if (data.Id == Guid.Empty)
             {
-                repo.AddPerson(data);
+                // repo.AddPerson(data);
             }else
             {
-                repo.UpdatePerson(data);
+                // repo.UpdatePerson(data);
             }
 
             return new OkObjectResult(data);
