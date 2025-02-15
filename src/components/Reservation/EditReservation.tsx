@@ -46,7 +46,7 @@ function EditReservation() {
 
     const handlePartySizeChange = (event: ChangeEvent<HTMLSelectElement>) => {
         const value = event.target.value;
-        setSelectedEntity({ ...selectedEntity, time: value });
+        setSelectedEntity({ ...selectedEntity, partySize: parseInt(value) });
     };
 
     const handleDelete = async (event: any) => {
