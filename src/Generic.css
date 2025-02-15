@@ -167,3 +167,111 @@
 .selected-time-slot{
   background-color: #3fd163 !important;
 }
+
+.margin-bottom-35{
+  margin-bottom: 35px;
+}
+
+.margin-bottom-10{
+  margin-bottom: 10px;
+}
+
+.margin-sides-10{
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+
+/* TimeSlotPicker.css */
+.time-slot-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.time-slot-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  width: 100%;
+}
+
+.time-slot-grid-container {
+  flex: 1;
+  max-width: 600px;
+  margin: 0 20px;
+}
+
+.time-slot-grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+}
+
+.time-slot-nav-button {
+  padding: 8px 16px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: white;
+  cursor: pointer;
+  min-width: 70px;
+  text-align: center;
+}
+
+.time-slot-nav-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.time-slot-button {
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: white;
+  cursor: pointer;
+  font-size: 14px;
+  text-align: center;
+}
+
+.time-slot-button:hover:not(:disabled) {
+  background: #f8f8f8;
+}
+
+.time-slot-button:disabled {
+  background: #f5f5f5;
+  color: #999;
+  cursor: not-allowed;
+}
+
+.time-slot-button.selected {
+  background: #2196f3;
+  color: white;
+  border-color: #1976d2;
+}
+
+.time-slot-button.highlighted {
+  background: #e3f2fd;
+  border-color: #90caf9;
+  color: #1976d2;
+}
+
+@media (max-width: 768px) {
+  .time-slot-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .time-slot-grid-container {
+    max-width: 300px;
+  }
+
+  .time-slot-button {
+    padding: 8px;
+    font-size: 13px;
+  }
+}

@@ -1,106 +1,94 @@
-import React, { useEffect, useState } from "react";
-import { Col, Row } from "react-bootstrap";
+import React, { useState, useEffect } from 'react';
 
 export interface TimeSlotPickerProps {
   timeSlots: string[];
   disabledSlots: string[];
   onTimeSelect: (time: string | null) => void;
-  highlightedSlot: string | null; // New prop to specify the highlighted time slot
+  highlightedSlot: string | null;
 }
 
-const TimeSlotPicker: React.FC<TimeSlotPickerProps> = ({ timeSlots, disabledSlots, onTimeSelect, highlightedSlot }) => {
+const TimeSlotPicker: React.FC<TimeSlotPickerProps> = ({
+  timeSlots,
+  disabledSlots,
+  onTimeSelect,
+  highlightedSlot
+}) => {
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
-  const [startIndex, setStartIndex] = useState(0);
-  const [isMobile, setIsMobile] = useState(false);
-  
-  const slotsPerView = 8;
-
-  // Determine the index of the highlighted slot
-  const highlightedIndex = timeSlots.indexOf(highlightedSlot || "");
+  const [currentPage, setCurrentPage] = useState(0);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const slotsPerView = isMobile ? 9 : 15;
 
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 768);
     };
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  // Only set initial page for highlighted slot, don't auto-update
   useEffect(() => {
-    if (highlightedIndex !== -1) {
-      // Calculate the startIndex to center the highlighted slot
-      const centerIndex = Math.floor(slotsPerView / 2);
-      const newStartIndex = Math.max(0, Math.min(highlightedIndex - centerIndex, timeSlots.length - slotsPerView));
-      setStartIndex(newStartIndex);
+    if (highlightedSlot && !selectedSlot) {
+      const highlightedIndex = timeSlots.indexOf(highlightedSlot);
+      if (highlightedIndex !== -1) {
+        setCurrentPage(Math.floor(highlightedIndex / slotsPerView));
+      }
     }
-  }, [highlightedSlot, timeSlots]);
+  }, [highlightedSlot, timeSlots, slotsPerView, selectedSlot]);
 
   const handleNext = () => {
-    if (startIndex + slotsPerView < timeSlots.length) {
-      setStartIndex(startIndex + 4);
-    }
+    const maxPages = Math.ceil(timeSlots.length / slotsPerView) - 1;
+    setCurrentPage(prev => Math.min(prev + 1, maxPages));
   };
 
   const handlePrev = () => {
-    if (startIndex > 0) {
-      setStartIndex(startIndex - 4);
-    }
+    setCurrentPage(prev => Math.max(prev - 1, 0));
   };
 
+  const handleTimeSelect = (time: string) => {
+    setSelectedSlot(time);
+    onTimeSelect(time);
+  };
+
+  const startIndex = currentPage * slotsPerView;
+  const visibleTimeSlots = timeSlots.slice(startIndex, startIndex + slotsPerView);
+
   return (
-    <div className="flex flex-col items-center space-y-4">
-      <h2 className="text-lg font-semibold">Choose an available time slot</h2>
-      <Row>
-        <Col md={2}>
-          {!isMobile && (
-            <button onClick={handlePrev} disabled={startIndex === 0} className="px-3 py-1 bg-gray-300 rounded">
-              ◀
-            </button>
-          )}
-        </Col>
-        <Col md={8}>
-          <div className="grid grid-cols-4 gap-4">
-            {timeSlots.slice(startIndex, startIndex + slotsPerView).map((time) => (
+    <div className="time-slot-container">
+      <div className="time-slot-nav">
+        <button 
+          className="time-slot-nav-button"
+          onClick={handlePrev} 
+          disabled={currentPage === 0}
+        >
+          Prev
+        </button>
+
+        <div className="time-slot-grid-container">
+          <div className="time-slot-grid">
+            {visibleTimeSlots.map((time) => (
               <button
                 key={time}
-                className={`px-4 py-2 border rounded text-center transition-all ${
-                  disabledSlots.includes(time)
-                    ? "bg-gray-300 cursor-not-allowed"
-                    : time === highlightedSlot
-                    ? "selected-time-slot" // Highlighted slot style
-                    : selectedSlot === time
-                    ? "bg-gray-200"
-                    : "hover:bg-gray-100"
-                }`}
+                className={`time-slot-button ${
+                  selectedSlot === time ? 'selected' : ''
+                } ${highlightedSlot === time ? 'highlighted' : ''}`}
                 disabled={disabledSlots.includes(time)}
-                onClick={() => {
-                  setSelectedSlot(time); // Set selected slot
-                  onTimeSelect(time);
-                }}
+                onClick={() => handleTimeSelect(time)}
               >
                 {time}
               </button>
             ))}
           </div>
-        </Col>
-        <Col md={2}>
-          {isMobile && (
-            <button onClick={handlePrev} disabled={startIndex === 0} className="px-3 py-1 bg-gray-300 rounded">
-              ◀
-            </button>
-          )}
-          <button onClick={handleNext} disabled={startIndex + slotsPerView >= timeSlots.length} className="px-3 py-1 bg-gray-300 rounded">
-            ▶
-          </button>
-        </Col>
-      </Row>
-      {/* <button
-        className="px-6 py-2 bg-green-900 text-white rounded mt-4 disabled:opacity-50"
-        disabled={!selectedSlot}
-      >
-        Reserve Now
-      </button> */}
+        </div>
+
+        <button 
+          className="time-slot-nav-button"
+          onClick={handleNext}
+          disabled={currentPage >= Math.ceil(timeSlots.length / slotsPerView) - 1}
+        >
+          Next
+        </button>
+      </div>
     </div>
   );
 };

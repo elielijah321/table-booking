@@ -15,7 +15,9 @@ function EditReservation() {
 
     const timeSlots = [
         "14:00", "14:15", "14:30", "14:45", "15:00", "15:15", "15:30", "15:45", 
-        "16:00", "16:15", "16:30", "16:45", "17:00", "17:15", "17:30", "17:45"
+        "16:00", "16:15", "16:30", "16:45", "17:00", "17:15", "17:30", "17:45",
+        "18:00", "18:15", "18:30", "18:45", "19:00", "19:15", "19:30", "19:45",
+        "20:00", "20:15", "20:30", "20:45", "21:00"
     ];
       
     const disabledSlots = ["14:00", "14:15", "14:30", "14:45"]; // Example of unavailable slots
@@ -25,9 +27,9 @@ function EditReservation() {
     const parsedId = id || '';
 
     useEffect(() => {
-        // if (parsedId !== "new") {
-        //     getPersonById(parsedId).then((data) => setSelectedEntity(data));
-        // }
+        if (parsedId !== "new") {
+            // getPersonById(parsedId).then((data) => setSelectedEntity(data));
+        }
     }, [parsedId]);
 
     const handleDateChange = (date: Date | null) => {
@@ -46,6 +48,12 @@ function EditReservation() {
         const value = event.target.value;
         setSelectedEntity({ ...selectedEntity, time: value });
     };
+
+    // const handleTimeSlotDropDownChange = (event: ChangeEvent<HTMLSelectElement>) => {
+    //     const uom = event.target.value;
+    //     // setSelectedIngredient({ ...selectedIngredient, unitOfMeasurement: uom });
+    //     // setHasBeenEdited(true);
+    //   }
 
     const datePickerProps: MyDatePickerProps = {
         disabledDates: [new Date(2025, 15, 2)],
@@ -135,10 +143,10 @@ function EditReservation() {
                             <Col md={4}>
 
                                 <Form.Group className="mb-3" controlId="formTime">
-                                    <Form.Label className='centered'>Time</Form.Label>
+                                    <Form.Label className='centered'>Unit Of Measurement</Form.Label>
                                     <select className="form-select" aria-label="Time" onChange={handleTimeSlotDropDownChange}>
                                     {timeSlots.map((t) => (
-                                            <option key={t} value={t} selected={selectedEntity.time == t} disabled={disabledSlots.includes(t)}>
+                                            <option key={t} selected={selectedEntity.time == t} value={t} disabled={disabledSlots.includes(t)}>
                                                 {t}
                                             </option>
                                         ))}
@@ -149,7 +157,8 @@ function EditReservation() {
 
                     </Form>
                     <hr />
-                        <TimeSlotPicker {...timePickerProps} />
+                    <h2 className="text-lg font-semibold margin-bottom-35">Choose an available time slot</h2>
+                    <TimeSlotPicker {...timePickerProps} />
                 </div>
             ) : (
                 <Loading />
