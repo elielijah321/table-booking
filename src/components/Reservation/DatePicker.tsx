@@ -22,8 +22,8 @@ const MyDatePicker: React.FC<MyDatePickerProps> = ({ disabledDates, onDateSelect
     const selectedDateWithoutTime = new Date(date);
     selectedDateWithoutTime.setHours(0, 0, 0, 0); // Reset time to midnight for the selected date
 
-    // Check if the selected date is in the past or is a weekend
-    const isWeekend = dayOfWeek === 6; // Disable weekends (Sunday = 0, Saturday = 6)
+    // Check if the selected date is in the past, is a weekend, or is a disabled date
+    const isWeekend = dayOfWeek === 0 || dayOfWeek === 6; // Disable weekends (Sunday = 0, Saturday = 6)
     const isPastDate = selectedDateWithoutTime < today; // Disable past dates
 
     // Check if the date is in the list of disabled dates
@@ -33,8 +33,8 @@ const MyDatePicker: React.FC<MyDatePickerProps> = ({ disabledDates, onDateSelect
       return selectedDateWithoutTime.getTime() === disabledDateWithoutTime.getTime();
     });
 
-    // Return true if the date should be disabled
-    return !isWeekend || isPastDate || isDisabledDate;
+    // Return true if the date should be disabled (weekend, past date, or in disabledDates)
+    return isWeekend || isPastDate || isDisabledDate;
   };
 
   // Handle date change and pass it to the parent if a callback is provided
@@ -47,12 +47,13 @@ const MyDatePicker: React.FC<MyDatePickerProps> = ({ disabledDates, onDateSelect
 
   return (
     <div>
-      <h2>Pick a Date</h2>
       <DatePicker
+        className='form-control'
         selected={selectedDate}
         onChange={handleDateChange} // Use the custom handler
         filterDate={date => !isDateDisabled(date)}  // Invert the logic to disable dates correctly
         placeholderText="Select a date"
+        dateFormat="MMMM d, yyyy"  // Customize date format as desired
       />
     </div>
   );

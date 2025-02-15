@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import { canEdit } from '../../helpers/UserHelper';
 import { Reservation } from '../../types/Reservation/Reservation';
 import Loading from '../HelperComponents/Loading';
-import { getAllPeople } from '../../functions/fetchEntities';
 
 function ReservationsPage() {
 
@@ -33,8 +32,10 @@ function ReservationsPage() {
 
   useEffect(() => {
     // fetch data
-    getAllPeople()
-      .then(entities => setEntities(entities));
+    // getAllPeople()
+    //   .then(entities => setEntities(entities));
+
+    setEntities([]);
   }, [])
 
   return (

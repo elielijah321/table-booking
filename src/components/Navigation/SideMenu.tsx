@@ -8,7 +8,7 @@ import Home from '../Home';
 
 import ForgotPasswordPage from './Authentication/ForgotPassword';
 import LoginPage from './Authentication/LoginPage';
-import PeoplePage from '../Reservation/PeoplePage';
+import PeoplePage from '../Reservation/ReservationsPage';
 import EditReservation from '../Reservation/EditReservation';
 
 const SideMenu: React.FC = () => {

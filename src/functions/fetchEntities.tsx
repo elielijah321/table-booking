@@ -1,4 +1,4 @@
-import { Person } from "../types/People/Person";
+// import { Person } from "../types/People/Person";
 
 
 
@@ -18,13 +18,13 @@ const getGETOptions = () => {
     }
 }
 
-const getPOSTOptions = (object: any) => {
-    return  {
-        method: 'POST',
-        headers: getHeaders(),
-        body: JSON.stringify(object)
-    }
-}
+// const getPOSTOptions = (object: any) => {
+//     return  {
+//         method: 'POST',
+//         headers: getHeaders(),
+//         body: JSON.stringify(object)
+//     }
+// }
 
 export const getTestFunction = async () => {
     const response = await fetch(`${domain}/TestFunction`, getGETOptions())
@@ -35,35 +35,35 @@ export const getTestFunction = async () => {
 
 
 
-export const getAllPeople = async () => {
-    const response = await fetch(`${domain}/GetAllPeople`, getGETOptions())
-        .then(response => response.json() as Promise<Person[]>);
+// export const getAllPeople = async () => {
+//     const response = await fetch(`${domain}/GetAllPeople`, getGETOptions())
+//         .then(response => response.json() as Promise<Person[]>);
 
-    return response;
-}
+//     return response;
+// }
 
-export const searchAllPeople = async (searchTerm: string) => {
-    const response = await fetch(`${domain}/GetAllPeople?searchTerm=${searchTerm}`, getGETOptions())
-        .then(response => response.json() as Promise<Person[]>);
+// export const searchAllPeople = async (searchTerm: string) => {
+//     const response = await fetch(`${domain}/GetAllPeople?searchTerm=${searchTerm}`, getGETOptions())
+//         .then(response => response.json() as Promise<Person[]>);
 
-    return response;
-}
+//     return response;
+// }
 
 
-export const getPersonById = async (id: string) => {
+// export const getPersonById = async (id: string) => {
 
-    const response = await fetch(`${domain}/GetPerson/${id}`, getGETOptions())
-        .then(response => response.json() as Promise<Person>);
+//     const response = await fetch(`${domain}/GetPerson/${id}`, getGETOptions())
+//         .then(response => response.json() as Promise<Person>);
 
-    return response;
-}
+//     return response;
+// }
 
-export const postPerson = async (_entity: Person) => {
-    const response = await fetch(`${domain}/PostPerson`, getPOSTOptions(_entity));
+// export const postPerson = async (_entity: Person) => {
+//     const response = await fetch(`${domain}/PostPerson`, getPOSTOptions(_entity));
 
-    return response;
-}
+//     return response;
+// }
 
-export const deletePersonById = async (id: string) => {
-    await fetch(`${domain}/DeletePerson/${id}`, getGETOptions());;
-}
+// export const deletePersonById = async (id: string) => {
+//     await fetch(`${domain}/DeletePerson/${id}`, getGETOptions());;
+// }

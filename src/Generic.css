@@ -152,3 +152,18 @@
 .view-case-table{
   border-color: #FFF !important;
 }
+
+
+.react-datepicker-wrapper{
+  width: 100% !important;
+}
+
+
+.time-picker-mobile{
+  width: 100px !important;
+  margin-top: 20px !important;
+}
+
+.selected-time-slot{
+  background-color: #3fd163 !important;
+}
