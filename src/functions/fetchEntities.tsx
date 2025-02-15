@@ -4,7 +4,7 @@ import { ReservationRequest } from "../types/Reservation/ReservationRequest";
 
 
 
-const domain = "https://ojafoodmart-functionapp-dev.azurewebsites.net/api"; 
+const domain = "https://tablebooking-functionapp-dev.azurewebsites.net/api"; 
 // const domain = "http://localhost:7071/api";
 
 const getHeaders = () => {
