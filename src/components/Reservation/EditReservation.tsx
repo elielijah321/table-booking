@@ -4,12 +4,15 @@ import { useParams } from 'react-router-dom';
 import { ReservationRequest } from '../../types/Reservation/ReservationRequest';
 import Loading from '../HelperComponents/Loading';
 import MyDatePicker, { MyDatePickerProps } from './DatePicker';
-import TimeSlotPicker, { TimeSlotPickerProps } from './TimeSlotPicker';
+import TimeSlotPicker from './TimeSlotPicker';
 
 function EditReservation() {
     const [hasBeenEdited] = useState(false);
     const [validated, setValidated] = useState(false);
-    const [selectedEntity, setSelectedEntity] = useState<ReservationRequest>({ partySize: 1, date: new Date(2025, 1, 17).toISOString(), time: "16:00"} as ReservationRequest);
+    const [selectedEntity, setSelectedEntity] = useState<ReservationRequest>({ partySize: 1, date: new Date(2025, 1, 17).toISOString(), time: "19:15"} as ReservationRequest);
+
+    const [timePickerKey, setTimePickerKey] = useState(0);
+
 
     const partSizes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
 
@@ -42,6 +45,9 @@ function EditReservation() {
     const handleTimeSlotDropDownChange = (event: ChangeEvent<HTMLSelectElement>) => {
         const value = event.target.value;
         setSelectedEntity({ ...selectedEntity, time: value });
+        
+        // Force TimeSlotPicker to re-render
+        setTimePickerKey((prevKey) => prevKey + 1);
     };
 
     const handlePartySizeChange = (event: ChangeEvent<HTMLSelectElement>) => {
@@ -81,12 +87,18 @@ function EditReservation() {
         onDateSelect: handleDateChange,
     };
 
-    const timePickerProps: TimeSlotPickerProps = {
-        timeSlots: timeSlots,
-        disabledSlots: disabledSlots,
-        highlightedSlot: selectedEntity.time,
-        onTimeSelect: handleTimeSlotPickerChange,
-    };
+
+    const drawTimePickerComponent = () => {
+        return (
+            <TimeSlotPicker
+                key={timePickerKey}
+                timeSlots={timeSlots}
+                disabledSlots={disabledSlots}
+                highlightedSlot={selectedEntity.time}
+                onTimeSelect={handleTimeSlotPickerChange}
+            />
+        );
+    }
 
     useEffect(() => {
         if (parsedId !== "new") {
@@ -158,7 +170,7 @@ function EditReservation() {
                     </Form>
                     <hr className='margin-bottom-35' />
                     <h2 className="text-lg font-semibold margin-bottom-35">Choose an available time slot</h2>
-                    <TimeSlotPicker {...timePickerProps} />
+                    {drawTimePickerComponent()}
                     <Button id="save" className="edit-form-submit" variant="primary" onClick={handleSubmit}>
                         Reserve Now
                     </Button>

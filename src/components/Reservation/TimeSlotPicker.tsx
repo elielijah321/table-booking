@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 export interface TimeSlotPickerProps {
+  key: number;
   timeSlots: string[];
   disabledSlots: string[];
   onTimeSelect: (time: string | null) => void;
@@ -69,9 +70,7 @@ const TimeSlotPicker: React.FC<TimeSlotPickerProps> = ({
             {visibleTimeSlots.map((time) => (
               <button
                 key={time}
-                className={`time-slot-button ${
-                  selectedSlot === time ? 'selected' : ''
-                } ${highlightedSlot === time ? 'highlighted' : ''}`}
+                className={`time-slot-button ${highlightedSlot === time ? 'highlighted' : ''}`}
                 disabled={disabledSlots.includes(time)}
                 onClick={() => handleTimeSelect(time)}
               >
