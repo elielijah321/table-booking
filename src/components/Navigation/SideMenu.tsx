@@ -10,6 +10,7 @@ import ForgotPasswordPage from './Authentication/ForgotPassword';
 import LoginPage from './Authentication/LoginPage';
 import PeoplePage from '../Reservation/ReservationsPage';
 import EditReservation from '../Reservation/EditReservation';
+import ConfirmReservation from '../Reservation/ConfirmReservation';
 
 const SideMenu: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -63,6 +64,7 @@ const SideMenu: React.FC = () => {
 
               <Route path="/Reservations" element={navigateToPageIfAuthenticated(<PeoplePage />)} />
               <Route path="/Reservation/:id/edit" element={navigateToPageIfAuthenticated(<EditReservation />)} />
+              <Route path="/Reservation/:id/confirm" element={navigateToPageIfAuthenticated(<ConfirmReservation />)} />
 
               <Route path="/login" element={<LoginPage />} />
               <Route path="/forgot-password" element={<ForgotPasswordPage />} />

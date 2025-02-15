@@ -1,9 +1,10 @@
 export interface Reservation {
     id: string;
     partySize: number;
-    date: string;
+    date: Date;
     time: string;
-    name: string;
+    firstname: string;
+    lastname: string;
     email: string;
     phone: string;
     notes: string;

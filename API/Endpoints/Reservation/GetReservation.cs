@@ -16,7 +16,7 @@ namespace Project.Function
         {
             log.LogInformation("GetReservation function processed a request.");
 
-            var data = RepositoryWrapper.GetRepo().GetPersonById(id);
+            var data = RepositoryWrapper.GetRepo().GetReservationById(id);
 
             return new OkObjectResult(data);
         }

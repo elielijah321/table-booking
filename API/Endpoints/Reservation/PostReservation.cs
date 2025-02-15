@@ -7,6 +7,12 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using System.Web.Helpers;
+using AremuCoreServices;
+using AremuCoreServices.Helpers;
+using System.Collections.Generic;
+using AremuCoreServices.Models;
+using AremuCoreServices.Models.Enums;
 // using AzureFunctions.Models;
 
 namespace Project.Function
@@ -32,7 +38,23 @@ namespace Project.Function
                 // repo.UpdatePerson(data);
             }
 
-            return new OkObjectResult(data);
+            var creds = TestHelper.GetStripeCredentialsRecord();
+
+            var lineItems = new List<StripeLineItemRecord>();
+
+            var productName = $"£5.00 x {data.PartySize} guests";
+
+            var total = 5 * data.PartySize;
+
+            var lineItem = new StripeLineItemRecord($"{productName}", total, 1);
+            lineItems.Add(lineItem);
+
+            var stripeLink = StripeService.CreateCheckoutSession(creds, lineItems, new List<StripePaymentType>() { StripePaymentType.CARD });
+
+            var result = JsonConvert.SerializeObject(stripeLink);
+
+            return new OkObjectResult(result);
         }
+        
     }
 }

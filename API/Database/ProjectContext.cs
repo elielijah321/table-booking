@@ -30,6 +30,6 @@ namespace Project.Function
             base.OnModelCreating(modelBuilder);
         }
 
-        public DbSet<Person> People { get; set; }
+        public DbSet<Reservation> Reservations { get; set; }
     }
 }

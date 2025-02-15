@@ -30,7 +30,7 @@ namespace Project.Function
 
             if(string.IsNullOrEmpty(searchTerm))
             {
-                data = repo.GetAllPeople().ToList();
+                data = repo.GetAllReservations().ToList();
             }else{
                 // data = repo.GetCaseByTerm(searchTerm).ToList();
             }

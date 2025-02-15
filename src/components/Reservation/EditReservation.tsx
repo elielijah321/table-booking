@@ -1,18 +1,21 @@
 import { ChangeEvent, useEffect, useState } from 'react';
 import { Button, Form, Row, Col } from 'react-bootstrap';
-import { useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { ReservationRequest } from '../../types/Reservation/ReservationRequest';
 import Loading from '../HelperComponents/Loading';
 import MyDatePicker, { MyDatePickerProps } from './DatePicker';
 import TimeSlotPicker from './TimeSlotPicker';
+import { postReservation } from '../../functions/fetchEntities';
 
 function EditReservation() {
-    const [hasBeenEdited] = useState(false);
+    const location = useLocation();
+    const navigate = useNavigate();
+
+
     const [validated, setValidated] = useState(false);
-    const [selectedEntity, setSelectedEntity] = useState<ReservationRequest>({ partySize: 1, date: new Date(2025, 1, 17).toISOString(), time: "19:15"} as ReservationRequest);
+    const [selectedEntity, setSelectedEntity] = useState<ReservationRequest>(location.state || { partySize: 1, date: new Date(2025, 1, 17), time: "19:15"} as ReservationRequest);
 
     const [timePickerKey, setTimePickerKey] = useState(0);
-
 
     const partSizes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
 
@@ -23,15 +26,14 @@ function EditReservation() {
         "20:00", "20:15", "20:30", "20:45", "21:00"
     ];
       
-    const disabledSlots = ["14:00", "14:15", "14:30", "14:45"]; // Example of unavailable slots
+    const disabledSlots = ["14:00", "14:15", "14:30", "14:45", "19:30"]; // Example of unavailable slots
 
-    // const navigate = useNavigate();
     const { id } = useParams();
     const parsedId = id || '';
 
     const handleDateChange = (date: Date | null) => {
         if (date) {
-            setSelectedEntity({ ...selectedEntity, date: new Date(date).toISOString() });
+            setSelectedEntity({ ...selectedEntity, date: new Date(date) });
         }
 
     };
@@ -55,6 +57,16 @@ function EditReservation() {
         setSelectedEntity({ ...selectedEntity, partySize: parseInt(value) });
     };
 
+    const handleFirstNameChange = (event: ChangeEvent<HTMLInputElement>) => {
+        const value = event.target.value;
+        setSelectedEntity({ ...selectedEntity, firstname: value });
+    };
+
+    const handleLastNameChange = (event: ChangeEvent<HTMLInputElement>) => {
+        const value = event.target.value;
+        setSelectedEntity({ ...selectedEntity, lastname: value });
+    };
+
     const handleDelete = async (event: any) => {
         event.preventDefault();
         // if (window.confirm(`Are you sure you want to delete ${selectedEntity.name}`)) {
@@ -70,12 +82,12 @@ function EditReservation() {
         if (form.checkValidity() === false) {
             event.stopPropagation();
         } else {
-            if (hasBeenEdited) {
-                // await postPerson(selectedEntity);
-            }
-            // navigate(`/People`, { replace: true });
+            // if (hasBeenEdited) {
+            // }
 
-            alert('Reservation made successfully!\n\n' + JSON.stringify(selectedEntity, null, 2));
+            var checkoutUrl = await postReservation(selectedEntity);
+
+            navigate(`/Reservation/new/confirm`, { replace: true , state: {selectedEntity, checkoutUrl}});
         }
         setValidated(true);
     };
@@ -128,6 +140,10 @@ function EditReservation() {
                             )}
                         </div>
 
+                        
+                    
+
+
                         <Row className="mb-3">
                             {/* Party Size Selection */}
                             <Col md={4}>
@@ -170,9 +186,41 @@ function EditReservation() {
                     </Form>
                     <hr className='margin-bottom-35' />
                     <h2 className="text-lg font-semibold margin-bottom-35">Choose an available time slot</h2>
-                    {drawTimePickerComponent()}
+                    <div className='margin-bottom-35'>
+                        {drawTimePickerComponent()}
+                    </div>
+
+                    <hr className='margin-bottom-35' />
+
+
+
+                    <Row className="mb-3">
+                            <Col md={6}>
+                                <Form.Label>First Name</Form.Label>
+                                <Form.Control 
+                                        type="text" 
+                                        placeholder="First Name" 
+                                        onChange={handleFirstNameChange} 
+                                        value={selectedEntity.firstname} 
+                                        required
+                                        />
+                            </Col>
+                            <Col md={6}>
+                                <Form.Label>Last Name</Form.Label>
+                                <Form.Control 
+                                        type="text" 
+                                        placeholder="Last Name" 
+                                        onChange={handleLastNameChange} 
+                                        value={selectedEntity.lastname} 
+                                        required
+                                        />
+                            </Col>
+                    </Row>
+
+                    <div className='margin-bottom-35'></div>
+
                     <Button id="save" className="edit-form-submit" variant="primary" onClick={handleSubmit}>
-                        Reserve Now
+                        Confirm Reservation
                     </Button>
                 </div>
             ) : (

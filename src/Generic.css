@@ -280,3 +280,60 @@
     font-size: 13px;
   }
 }
+
+
+/* reservation-confirmation.css */
+.reservation-confirmation-container {
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.reservation-confirmation-header {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.reservation-confirmation-table {
+  width: 100%;
+  margin-bottom: 20px;
+  border-collapse: collapse;
+}
+
+.reservation-confirmation-table td {
+  padding: 8px;
+  font-size: 16px;
+}
+
+.reservation-confirmation-table tr {
+  border-bottom: 1px solid #f9f9f9;
+}
+
+.reservation-confirmation-hr {
+  border: 1px solid #f9f9f9;
+  margin: 10px 0;
+}
+
+.reservation-action-button {
+  margin-top: 30px !important;
+  /* margin-bottom: 10px !important; */
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.reservation-cancel-button {
+  background-color: #f0233e;
+  float: left !important;
+}
+
+.reservation-confirm-button {
+  background-color: #1d6219;
+  float: right !important;
+}
+

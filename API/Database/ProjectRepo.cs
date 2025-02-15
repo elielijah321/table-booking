@@ -14,36 +14,36 @@ namespace AzureFunctions.Database
             _ctx = ctx;
         }
 
-         public string AddPerson(UpdatePersonRequestModel request)
+         public string AddPerson(UpdateReservationRequestModel request)
          {
             var entity = request.ToEntity();
 
-            _ctx.People.Add(entity);
+            _ctx.Reservations.Add(entity);
             SaveAll();
 
             return entity.Id.ToString();
          }
 
-        public string UpdatePerson(UpdatePersonRequestModel request)
+        public string UpdatePerson(UpdateReservationRequestModel request)
         {
             var entity = request.ToEntity();
-            var entityToUpdate = _ctx.People.FirstOrDefault(c => c.Id == entity.Id);
+            var entityToUpdate = _ctx.Reservations.FirstOrDefault(c => c.Id == entity.Id);
 
-            entityToUpdate.Name = entity.Name;
+            // entityToUpdate.Name = entity.Name;
 
             SaveAll();
 
             return entity.Id.ToString();
         }
 
-        public IEnumerable<Person> GetAllPeople()
+        public IEnumerable<Reservation> GetAllReservations()
         {
-           return _ctx.People;
+           return _ctx.Reservations;
         }
 
-        public Person GetPersonById(string id)
+        public Reservation GetReservationById(string id)
         {
-           return GetAllPeople().FirstOrDefault(x => x.Id.ToString() == id);
+           return GetAllReservations().FirstOrDefault(x => x.Id.ToString() == id);
         }
 
         // Save
