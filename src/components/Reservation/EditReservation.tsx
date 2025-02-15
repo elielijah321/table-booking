@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { Button, Form, Row, Col } from 'react-bootstrap';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { ReservationRequest } from '../../types/Reservation/ReservationRequest';
 import Loading from '../HelperComponents/Loading';
 import MyDatePicker, { MyDatePickerProps } from './DatePicker';
@@ -9,9 +9,9 @@ import TimeSlotPicker, { TimeSlotPickerProps } from './TimeSlotPicker';
 function EditReservation() {
     const [hasBeenEdited] = useState(false);
     const [validated, setValidated] = useState(false);
-    const [selectedEntity, setSelectedEntity] = useState<ReservationRequest>({ time: "16:00"} as ReservationRequest);
+    const [selectedEntity, setSelectedEntity] = useState<ReservationRequest>({ partySize: 1, date: new Date(2025, 1, 17).toISOString(), time: "16:00"} as ReservationRequest);
 
-    const partSizes = ['1 guest', '2 guests'];
+    const partSizes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
 
     const timeSlots = [
         "14:00", "14:15", "14:30", "14:45", "15:00", "15:15", "15:30", "15:45", 
@@ -22,20 +22,15 @@ function EditReservation() {
       
     const disabledSlots = ["14:00", "14:15", "14:30", "14:45"]; // Example of unavailable slots
 
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
     const { id } = useParams();
     const parsedId = id || '';
 
-    useEffect(() => {
-        if (parsedId !== "new") {
-            // getPersonById(parsedId).then((data) => setSelectedEntity(data));
-        }
-    }, [parsedId]);
-
     const handleDateChange = (date: Date | null) => {
         if (date) {
-            alert(date);
+            setSelectedEntity({ ...selectedEntity, date: new Date(date).toISOString() });
         }
+
     };
 
     const handleTimeSlotPickerChange = (time: string | null) => {
@@ -44,32 +39,15 @@ function EditReservation() {
         }
     };
 
-    const handleTimeSlotDropDownChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const handleTimeSlotDropDownChange = (event: ChangeEvent<HTMLSelectElement>) => {
         const value = event.target.value;
         setSelectedEntity({ ...selectedEntity, time: value });
     };
 
-    // const handleTimeSlotDropDownChange = (event: ChangeEvent<HTMLSelectElement>) => {
-    //     const uom = event.target.value;
-    //     // setSelectedIngredient({ ...selectedIngredient, unitOfMeasurement: uom });
-    //     // setHasBeenEdited(true);
-    //   }
-
-    const datePickerProps: MyDatePickerProps = {
-        disabledDates: [new Date(2025, 15, 2)],
-        onDateSelect: handleDateChange,
+    const handlePartySizeChange = (event: ChangeEvent<HTMLSelectElement>) => {
+        const value = event.target.value;
+        setSelectedEntity({ ...selectedEntity, time: value });
     };
-
-    const timePickerProps: TimeSlotPickerProps = {
-        timeSlots: timeSlots,
-        disabledSlots: disabledSlots,
-        highlightedSlot: selectedEntity.time,
-        onTimeSelect: handleTimeSlotPickerChange,
-    };
-
-    // const handlePartySizeChange = (event: ChangeEvent<HTMLSelectElement>) => {
-    //     setHasBeenEdited(true);
-    // };
 
     const handleDelete = async (event: any) => {
         event.preventDefault();
@@ -89,18 +67,43 @@ function EditReservation() {
             if (hasBeenEdited) {
                 // await postPerson(selectedEntity);
             }
-            navigate(`/People`, { replace: true });
+            // navigate(`/People`, { replace: true });
+
+            alert('Reservation made successfully!\n\n' + JSON.stringify(selectedEntity, null, 2));
         }
         setValidated(true);
     };
+
+
+    const datePickerProps: MyDatePickerProps = {
+        selectedDate: selectedEntity.date ? new Date(selectedEntity.date) : new Date(2025, 1, 17),
+        disabledDates: [new Date(2025, 15, 2)],
+        onDateSelect: handleDateChange,
+    };
+
+    const timePickerProps: TimeSlotPickerProps = {
+        timeSlots: timeSlots,
+        disabledSlots: disabledSlots,
+        highlightedSlot: selectedEntity.time,
+        onTimeSelect: handleTimeSlotPickerChange,
+    };
+
+    useEffect(() => {
+        if (parsedId !== "new") {
+            // getPersonById(parsedId).then((data) => setSelectedEntity(data));
+        }
+    }, [parsedId]);
 
     return (
         <>
             {parsedId === "new" || selectedEntity.id !== undefined ? (
                 <div className="page">
-                    <h1>Make a reservation</h1>
-                    <p>Select your details and we’ll try to get the best seats for you.</p>
-                    <Form noValidate validated={validated} onSubmit={handleSubmit}>
+                    <div className='margin-bottom-35'>
+                        <h1>Make a reservation</h1>
+                        <p>Select your details and we’ll try to get the best seats for you.</p>
+                    </div>
+
+                    <Form className='margin-bottom-35' noValidate validated={validated} onSubmit={handleSubmit}>
                         <div className="edit-action-btns mb-4">
                             {/* <Button id="save" className="edit-form-submit" variant="primary" type="submit">
                                 Save
@@ -118,16 +121,13 @@ function EditReservation() {
                             <Col md={4}>
                                 <Form.Group controlId="formPartySize">
                                     <Form.Label className="centered">Party Size</Form.Label>
-                                    <Form.Control
-                                        as="select"
-                                        required
-                                    >
+                                    <select className="form-select" aria-label="Time" onChange={handlePartySizeChange}>
                                         {partSizes.map((ps) => (
-                                            <option key={ps} value={ps}>
-                                                {ps}
+                                            <option key={ps} selected={selectedEntity.partySize == ps} value={ps}>
+                                                {ps} guest{ps > 1 ? 's' : ''}
                                             </option>
                                         ))}
-                                    </Form.Control>
+                                    </select>
                                 </Form.Group>
                             </Col>
 
@@ -143,7 +143,7 @@ function EditReservation() {
                             <Col md={4}>
 
                                 <Form.Group className="mb-3" controlId="formTime">
-                                    <Form.Label className='centered'>Unit Of Measurement</Form.Label>
+                                    <Form.Label className='centered'>Time</Form.Label>
                                     <select className="form-select" aria-label="Time" onChange={handleTimeSlotDropDownChange}>
                                     {timeSlots.map((t) => (
                                             <option key={t} selected={selectedEntity.time == t} value={t} disabled={disabledSlots.includes(t)}>
@@ -156,9 +156,12 @@ function EditReservation() {
                         </Row>
 
                     </Form>
-                    <hr />
+                    <hr className='margin-bottom-35' />
                     <h2 className="text-lg font-semibold margin-bottom-35">Choose an available time slot</h2>
                     <TimeSlotPicker {...timePickerProps} />
+                    <Button id="save" className="edit-form-submit" variant="primary" onClick={handleSubmit}>
+                        Reserve Now
+                    </Button>
                 </div>
             ) : (
                 <Loading />

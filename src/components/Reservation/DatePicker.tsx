@@ -1,14 +1,15 @@
-import React, { useState } from 'react';
+import React from 'react';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css"; // Import the CSS for the datepicker
 
 export interface MyDatePickerProps {
+  selectedDate: Date | null; // Optional selected date
   disabledDates: Date[];
   onDateSelect: (date: Date | null) => void; // Optional callback to handle date selection
 }
 
-const MyDatePicker: React.FC<MyDatePickerProps> = ({ disabledDates, onDateSelect }) => {
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+const MyDatePicker: React.FC<MyDatePickerProps> = ({ selectedDate,disabledDates, onDateSelect }) => {
+  // const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
   // Disable weekends, past dates, and custom disabled dates
   const isDateDisabled = (date: Date): boolean => {
@@ -39,9 +40,10 @@ const MyDatePicker: React.FC<MyDatePickerProps> = ({ disabledDates, onDateSelect
 
   // Handle date change and pass it to the parent if a callback is provided
   const handleDateChange = (date: Date | null) => {
-    setSelectedDate(date);
     if (onDateSelect) {
       onDateSelect(date); // Pass the selected date to the parent component
+      // setSelectedDate(date);
+
     }
   };
 
@@ -53,7 +55,9 @@ const MyDatePicker: React.FC<MyDatePickerProps> = ({ disabledDates, onDateSelect
         onChange={handleDateChange} // Use the custom handler
         filterDate={date => !isDateDisabled(date)}  // Invert the logic to disable dates correctly
         placeholderText="Select a date"
-        dateFormat="MMMM d, yyyy"  // Customize date format as desired
+        dateFormat="d/MM/yyyy"  // Customize date format as desired
+
+
       />
     </div>
   );
