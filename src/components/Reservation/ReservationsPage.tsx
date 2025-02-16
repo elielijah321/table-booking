@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Accordion, Button, Table } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { canEdit } from '../../helpers/UserHelper';
 import { Reservation } from '../../types/Reservation/Reservation';
 import Loading from '../HelperComponents/Loading';
@@ -12,6 +12,10 @@ function ReservationsPage() {
 
   const [entities, setEntities] = useState<Reservation[] | undefined>(undefined);
   // const [searchTerm, setSearchTerm] = useState<string>("");
+
+
+      const { businessName } = useParams();
+      const parsedBusinessName = businessName || '';
 
 
   // const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -59,7 +63,7 @@ function ReservationsPage() {
             //systemUser
             canEdit() &&
             <div className='add-new-entity-btn'>
-                  <Link className="navitem" to="/Reservation/new/edit">
+                  <Link className="navitem" to={`/${parsedBusinessName}/reservation/new/edit`}>
                       <Button variant="primary" className="mb-3">
                           Add Reservation
                       </Button>

@@ -5,38 +5,36 @@ import { ReservationRequest } from '../../types/Reservation/ReservationRequest';
 import Loading from '../HelperComponents/Loading';
 import MyDatePicker, { MyDatePickerProps } from './DatePicker';
 import TimeSlotPicker from './TimeSlotPicker';
-import { postReservation } from '../../functions/fetchEntities';
-import { RestaurantInfo } from '../../types/Reservation/Reservation';
+import { BusinessInfo, RestaurantInfo } from '../../types/Reservation/Reservation';
+import { getBusinessInfo } from '../../functions/fetchEntities';
 
 function EditReservation() {
     const location = useLocation();
     const navigate = useNavigate();
 
+    const defaultBusinessInfo: BusinessInfo = {
+        businessName: "Loading...", // Default placeholder values
+        businessOfferings: [],
+        timeSlots: [],
+        disabledSlots: [],
+        partySizes: []
+    };
 
     const [validated, setValidated] = useState(false);
     const [selectedEntity, setSelectedEntity] = useState<ReservationRequest>(location.state || { partySize: 1, date: new Date(2025, 1, 17), time: "19:15"} as ReservationRequest);
+    const [businessInfo, setBusinessInfo] = useState<BusinessInfo>(defaultBusinessInfo);
 
     const [timePickerKey, setTimePickerKey] = useState(0);
 
-    const partSizes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
-
-    const timeSlots = [
-        "14:00", "14:15", "14:30", "14:45", "15:00", "15:15", "15:30", "15:45", 
-        "16:00", "16:15", "16:30", "16:45", "17:00", "17:15", "17:30", "17:45",
-        "18:00", "18:15", "18:30", "18:45", "19:00", "19:15", "19:30", "19:45",
-        "20:00", "20:15", "20:30", "20:45", "21:00"
-    ];
-      
-    const disabledSlots = ["14:00", "14:15", "14:30", "14:45", "19:30"]; // Example of unavailable slots
-
-    const { id } = useParams();
+    const { id, businessName } = useParams();
     const parsedId = id || '';
+    const parsedBusinessName = businessName || '';
+
 
     const handleDateChange = (date: Date | null) => {
         if (date) {
             setSelectedEntity({ ...selectedEntity, date: new Date(date) });
         }
-
     };
 
     const handleTimeSlotPickerChange = (time: string | null) => {
@@ -59,7 +57,6 @@ function EditReservation() {
     };
 
 
-
     const handleDelete = async (event: any) => {
         event.preventDefault();
         // if (window.confirm(`Are you sure you want to delete ${selectedEntity.name}`)) {
@@ -79,17 +76,12 @@ function EditReservation() {
             // }
 
               const restaurantInfo: RestaurantInfo = {
-                    name: "Carribean Kitchen",
+                    name: businessInfo.businessName,
                     reservation: selectedEntity,
-                    offering: {
-                    name: "Deposit",
-                    pricePerPerson: 5,
-                    }
+                    offering: businessInfo.businessOfferings[0]
                 };
 
-            var checkoutUrl = await postReservation(selectedEntity);
-
-            navigate(`/Reservation/new/confirm`, { replace: true , state: {restaurantInfo, checkoutUrl}});
+            navigate(`/${parsedBusinessName}/reservation/new/confirm`, { replace: true , state: {restaurantInfo}});
         }
         setValidated(true);
     };
@@ -106,8 +98,8 @@ function EditReservation() {
         return (
             <TimeSlotPicker
                 key={timePickerKey}
-                timeSlots={timeSlots}
-                disabledSlots={disabledSlots}
+                timeSlots={businessInfo.timeSlots}
+                disabledSlots={businessInfo.disabledSlots}
                 highlightedSlot={selectedEntity.time}
                 onTimeSelect={handleTimeSlotPickerChange}
             />
@@ -118,6 +110,8 @@ function EditReservation() {
         if (parsedId !== "new") {
             // getPersonById(parsedId).then((data) => setSelectedEntity(data));
         }
+
+        getBusinessInfo(parsedBusinessName).then(data => setBusinessInfo(data));
     }, [parsedId]);
 
     return (
@@ -142,19 +136,15 @@ function EditReservation() {
                             )}
                         </div>
 
-                        
-                    
-
-
                         <Row className="mb-3">
                             {/* Party Size Selection */}
                             <Col md={4}>
                                 <Form.Group controlId="formPartySize">
                                     <Form.Label className="centered">Party Size</Form.Label>
                                     <select className="form-select" aria-label="Time" onChange={handlePartySizeChange}>
-                                        {partSizes.map((ps) => (
+                                        {businessInfo.partySizes?.map((ps) => (
                                             <option key={ps} selected={selectedEntity.partySize == ps} value={ps}>
-                                                {ps} guest{ps > 1 ? 's' : ''}
+                                                {ps > 1 ? `${ps} people` : '1 person'}
                                             </option>
                                         ))}
                                     </select>
@@ -175,8 +165,8 @@ function EditReservation() {
                                 <Form.Group className="mb-3" controlId="formTime">
                                     <Form.Label className='centered'>Time</Form.Label>
                                     <select className="form-select" aria-label="Time" onChange={handleTimeSlotDropDownChange}>
-                                    {timeSlots.map((t) => (
-                                            <option key={t} selected={selectedEntity.time == t} value={t} disabled={disabledSlots.includes(t)}>
+                                    {businessInfo.timeSlots.map((t) => (
+                                            <option key={t} selected={selectedEntity.time == t} value={t} disabled={businessInfo.disabledSlots.includes(t)}>
                                                 {t}
                                             </option>
                                         ))}

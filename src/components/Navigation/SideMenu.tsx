@@ -13,6 +13,7 @@ import EditReservation from '../Reservation/EditReservation';
 import ConfirmReservation from '../Reservation/ConfirmReservation';
 
 const SideMenu: React.FC = () => {
+  // const user = useSelector((state: RootState) => state.auth.user);
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleMenu = () => {
@@ -21,10 +22,13 @@ const SideMenu: React.FC = () => {
 
   const [activeIndex, setActiveIndex] = useState(0);
 
+
+  const usersPage = "Tola";
+
   const menuItems = 
   [
       { name: 'Home', icon: NestBox, path: '/home' },
-      { name: 'Reservations', icon: Money, path: '/Reservations' },
+      { name: 'Reservations', icon: Money, path: `/${usersPage}/reservations` },
   ];
 
   const isAuthenticated = () => {
@@ -62,9 +66,9 @@ const SideMenu: React.FC = () => {
               <Route path="/" element={navigateToPageIfAuthenticated(<Home />)} />
               <Route path="/home" element={navigateToPageIfAuthenticated(<Home />)} />
 
-              <Route path="/Reservations" element={navigateToPageIfAuthenticated(<PeoplePage />)} />
-              <Route path="/Reservation/:id/edit" element={navigateToPageIfAuthenticated(<EditReservation />)} />
-              <Route path="/Reservation/:id/confirm" element={navigateToPageIfAuthenticated(<ConfirmReservation />)} />
+              <Route path="/:businessName/reservations" element={navigateToPageIfAuthenticated(<PeoplePage />)} />
+              <Route path="/:businessName/reservation/:id/edit" element={navigateToPageIfAuthenticated(<EditReservation />)} />
+              <Route path="/:businessName/reservation/:id/confirm" element={navigateToPageIfAuthenticated(<ConfirmReservation />)} />
 
               <Route path="/login" element={<LoginPage />} />
               <Route path="/forgot-password" element={<ForgotPasswordPage />} />

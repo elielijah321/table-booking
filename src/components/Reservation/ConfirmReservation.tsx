@@ -1,9 +1,11 @@
-import React, { ChangeEvent, useState } from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import { RestaurantInfo } from '../../types/Reservation/Reservation';
 import { Button, Col, Form, Row } from 'react-bootstrap';
 import { CalendarIcon, ClockIcon, UsersIcon } from '../Icons/Icons';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { getShortDateFornat } from '../../helpers/DateHelper';
+import { postReservation } from '../../functions/fetchEntities';
+import CountdownTimer from '../HelperComponents/CountdownTimer';
 
 
 const ConfirmReservation: React.FC = () => {
@@ -11,9 +13,12 @@ const ConfirmReservation: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
 
-    const [selectedEntity, setSelectedEntity] = useState<RestaurantInfo>(location.state.restaurantInfo);
+    const { businessName } = useParams();
+    const parsedBusinessName = businessName || '';
 
-    const [stripeCheckoutUrl] = useState<string>(location.state.checkoutUrl);
+    const [previousPageLink] = useState<string>(`/${parsedBusinessName}/Reservation/new/edit`);
+
+    const [selectedEntity, setSelectedEntity] = useState<RestaurantInfo>(location.state.restaurantInfo);
 
     const [formIsInvalid, setIsFormInvalid] = useState<boolean>(true);
 
@@ -22,25 +27,20 @@ const ConfirmReservation: React.FC = () => {
     const handleCancel = async (event: any) => {
         event.preventDefault();
 
-        navigate(`/Reservation/new/edit`, { replace: true , state: selectedEntity.reservation});
+        navigate(previousPageLink, { replace: true , state: selectedEntity.reservation});
     };
 
     const handleContinueToPayment = async (event: any) => {
         event.preventDefault();
 
+        selectedEntity.reservation.pricePerItem = selectedEntity.offering.pricePerPerson;
+
+        var checkoutUrl = await postReservation(selectedEntity.reservation);
+
         const link = document.createElement('a');
-        link.href = stripeCheckoutUrl;
+        link.href = checkoutUrl;
         document.body.appendChild(link);
         link.click();
-    }
-
-    const isFormInvalid = () => {
-
-        var _reservation = selectedEntity.reservation;
-
-        var result = _reservation.firstname.length < 3 && _reservation.lastname.length < 3;
-
-        return result;
     }
 
     const handleFirstNameChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -51,7 +51,6 @@ const ConfirmReservation: React.FC = () => {
         _reservation.firstname = value;
 
         setSelectedEntity({ ...selectedEntity, reservation: _reservation });
-        setIsFormInvalid(isFormInvalid());
     };
 
     const handleLastNameChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -61,8 +60,20 @@ const ConfirmReservation: React.FC = () => {
         _reservation.lastname = value;
 
         setSelectedEntity({ ...selectedEntity, reservation: _reservation });
-        setIsFormInvalid(isFormInvalid());
     };
+
+
+    useEffect(() => {
+
+        const isFormInvalid = () => {
+            var _reservation = selectedEntity.reservation;
+
+            return ((_reservation.firstname?.length ?? 0) < 3 || (_reservation.lastname?.length ?? 0) < 3);
+
+        };
+    
+        setIsFormInvalid(isFormInvalid());
+    }, [selectedEntity])
 
   return (
     <div className="booking-container">
@@ -90,7 +101,7 @@ const ConfirmReservation: React.FC = () => {
       </div>
 
       <div className="timer-alert">
-        <p>We're holding this reservation for you for <strong>2:00 minutes</strong></p>
+        <p>We're holding this reservation for you for <strong><CountdownTimer minutes={1} redirectTo={previousPageLink} /></strong> minutes</p>
       </div>
 
       <section className="section">

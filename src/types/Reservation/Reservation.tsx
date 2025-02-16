@@ -11,6 +11,7 @@ export interface Reservation {
     status: string;
     createdAt: string;
     updatedAt: string;
+    pricePerItem: number;
 }
 
 export interface Offering {
@@ -26,4 +27,12 @@ export interface RestaurantInfo {
 
 export interface IconProps {
   className?: string;
+}
+
+export interface BusinessInfo {
+  businessName: string;
+  businessOfferings: Offering[];
+  partySizes: number[];
+  timeSlots: string[];
+  disabledSlots: string[];
 }

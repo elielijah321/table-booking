@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Project.Function
 {
-    public static class GetCase
+    public static class GetReservation
     {
         [FunctionName("GetReservation")]
         public static async Task<IActionResult> Run(

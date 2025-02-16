@@ -42,9 +42,9 @@ namespace Project.Function
 
             var lineItems = new List<StripeLineItemRecord>();
 
-            var productName = $"£5.00 x {data.PartySize} guests";
+            var productName = $"£{data.PricePerItem}.00 x {data.PartySize} guests";
 
-            var total = 5 * data.PartySize;
+            var total = data.PricePerItem * data.PartySize;
 
             var lineItem = new StripeLineItemRecord($"{productName}", total, 1);
             lineItems.Add(lineItem);

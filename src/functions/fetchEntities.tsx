@@ -1,5 +1,6 @@
 // import { Person } from "../types/People/Person";
 
+import { BusinessInfo } from "../types/Reservation/Reservation";
 import { ReservationRequest } from "../types/Reservation/ReservationRequest";
 
 
@@ -42,6 +43,38 @@ export const postReservation = async (reservation: ReservationRequest) => {
     return response;
 }
 
+
+
+export const getBusinessInfo = async (businessName: string) => {
+    // const response = fetch(`${domain}/GetBusiness/${businessName}`, getGETOptions())
+    //     .then(response => response.json() as Promise<BusinessInfo>);
+
+    // return response;
+
+    const partSizes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
+
+    const timeSlots = [
+        "14:00", "14:15", "14:30", "14:45", "15:00", "15:15", "15:30", "15:45", 
+        "16:00", "16:15", "16:30", "16:45", "17:00", "17:15", "17:30", "17:45",
+        "18:00", "18:15", "18:30", "18:45", "19:00", "19:15", "19:30", "19:45",
+        "20:00", "20:15", "20:30", "20:45", "21:00"
+    ];
+
+    const disabledSlots = ["14:00", "14:15", "14:30", "14:45", "19:30"]; // Example of unavailable slots
+    
+    var businessInfo: BusinessInfo = {
+        businessName: businessName,
+        businessOfferings: [{
+            name: "Deposit",
+            pricePerPerson: 5
+        }],
+        partySizes: partSizes,
+        timeSlots: timeSlots,
+        disabledSlots: disabledSlots
+    };
+
+    return businessInfo;
+}
 
 
 // export const getAllPeople = async () => {
