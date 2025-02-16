@@ -39,9 +39,6 @@ export const getTestFunction = async () => {
 export const postReservation = async (reservation: ReservationRequest) => {
     const response = await fetch(`${domain}/PostReservation`, getPOSTOptions(reservation)).then(response => response.json() as Promise<string>);
 
-
-    console.log(response);
-
     return response;
 }
 

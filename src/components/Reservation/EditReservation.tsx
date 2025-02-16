@@ -6,6 +6,7 @@ import Loading from '../HelperComponents/Loading';
 import MyDatePicker, { MyDatePickerProps } from './DatePicker';
 import TimeSlotPicker from './TimeSlotPicker';
 import { postReservation } from '../../functions/fetchEntities';
+import { RestaurantInfo } from '../../types/Reservation/Reservation';
 
 function EditReservation() {
     const location = useLocation();
@@ -57,15 +58,7 @@ function EditReservation() {
         setSelectedEntity({ ...selectedEntity, partySize: parseInt(value) });
     };
 
-    const handleFirstNameChange = (event: ChangeEvent<HTMLInputElement>) => {
-        const value = event.target.value;
-        setSelectedEntity({ ...selectedEntity, firstname: value });
-    };
 
-    const handleLastNameChange = (event: ChangeEvent<HTMLInputElement>) => {
-        const value = event.target.value;
-        setSelectedEntity({ ...selectedEntity, lastname: value });
-    };
 
     const handleDelete = async (event: any) => {
         event.preventDefault();
@@ -85,9 +78,18 @@ function EditReservation() {
             // if (hasBeenEdited) {
             // }
 
+              const restaurantInfo: RestaurantInfo = {
+                    name: "Carribean Kitchen",
+                    reservation: selectedEntity,
+                    offering: {
+                    name: "Deposit",
+                    pricePerPerson: 5,
+                    }
+                };
+
             var checkoutUrl = await postReservation(selectedEntity);
 
-            navigate(`/Reservation/new/confirm`, { replace: true , state: {selectedEntity, checkoutUrl}});
+            navigate(`/Reservation/new/confirm`, { replace: true , state: {restaurantInfo, checkoutUrl}});
         }
         setValidated(true);
     };
@@ -189,35 +191,6 @@ function EditReservation() {
                     <div className='margin-bottom-35'>
                         {drawTimePickerComponent()}
                     </div>
-
-                    <hr className='margin-bottom-35' />
-
-
-
-                    <Row className="mb-3">
-                            <Col md={6}>
-                                <Form.Label>First Name</Form.Label>
-                                <Form.Control 
-                                        type="text" 
-                                        placeholder="First Name" 
-                                        onChange={handleFirstNameChange} 
-                                        value={selectedEntity.firstname} 
-                                        required
-                                        />
-                            </Col>
-                            <Col md={6}>
-                                <Form.Label>Last Name</Form.Label>
-                                <Form.Control 
-                                        type="text" 
-                                        placeholder="Last Name" 
-                                        onChange={handleLastNameChange} 
-                                        value={selectedEntity.lastname} 
-                                        required
-                                        />
-                            </Col>
-                    </Row>
-
-                    <div className='margin-bottom-35'></div>
 
                     <Button id="save" className="edit-form-submit" variant="primary" onClick={handleSubmit}>
                         Confirm Reservation

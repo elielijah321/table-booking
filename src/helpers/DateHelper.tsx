@@ -17,6 +17,18 @@ export const getDisplayDate = (date?: Date) => {
     return formattedDate;
 }
 
+
+export const getShortDateFornat = (date: Date) => {
+
+    return new Intl.DateTimeFormat('en-GB', {
+        weekday: 'short',  // "Thu"
+        day: '2-digit',     // "20"
+        month: 'short'      // "Feb"
+    }).format(date);
+
+}
+
+
 const getDateParts = (date: Date) => {
 
     var dateParts = new Date(date).toLocaleString("en-GB").split(", ");

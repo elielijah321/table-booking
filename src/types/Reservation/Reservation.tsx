@@ -12,3 +12,18 @@ export interface Reservation {
     createdAt: string;
     updatedAt: string;
 }
+
+export interface Offering {
+  name: string;
+  pricePerPerson: number;
+}
+
+export interface RestaurantInfo {
+  name: string;
+  reservation: Reservation;
+  offering: Offering;
+}
+
+export interface IconProps {
+  className?: string;
+}
