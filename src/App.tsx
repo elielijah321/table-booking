@@ -10,7 +10,6 @@ function App() {
     <>
       {/* <ToastMessage ref={toastRef} initialSuccessToast={true} initialMessage="Initial message" /> */}
 
-
       <SideMenu />
 
     </>

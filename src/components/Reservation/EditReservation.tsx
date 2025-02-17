@@ -6,36 +6,60 @@ import Loading from '../HelperComponents/Loading';
 import MyDatePicker, { MyDatePickerProps } from './DatePicker';
 import TimeSlotPicker from './TimeSlotPicker';
 import { BusinessInfo, RestaurantInfo } from '../../types/Reservation/Reservation';
-import { getBusinessInfo } from '../../functions/fetchEntities';
+import { getBusinessInfo, postGetBusinessDisabledTimeSlots } from '../../functions/fetchEntities';
+import { GetBusinessDisabledTimeSlotsRequest } from '../../types/RequestModels/GetBusinessDisabledTimeSlotsRequest';
 
 function EditReservation() {
     const location = useLocation();
     const navigate = useNavigate();
 
-    const defaultBusinessInfo: BusinessInfo = {
-        businessName: "Loading...", // Default placeholder values
-        businessOfferings: [],
-        timeSlots: [],
-        disabledSlots: [],
-        partySizes: []
-    };
-
-    const [validated, setValidated] = useState(false);
-    const [selectedEntity, setSelectedEntity] = useState<ReservationRequest>(location.state || { partySize: 1, date: new Date(2025, 1, 17), time: "19:15"} as ReservationRequest);
-    const [businessInfo, setBusinessInfo] = useState<BusinessInfo>(defaultBusinessInfo);
-
-    const [timePickerKey, setTimePickerKey] = useState(0);
-
     const { id, businessName } = useParams();
     const parsedId = id || '';
     const parsedBusinessName = businessName || '';
 
+    const defaultBusinessInfo: BusinessInfo = {
+        id: "",
+        businessName: "Loading...", // Default placeholder values
+        businessOfferings: [],
+        timeSlots: [],
+        partySizes: []
+    };
 
+    const defaultReservationRequest = {
+        partySize: 1, 
+        date: new Date(2025, 1, 17), 
+        time: "9:00"
+    } as ReservationRequest;
+
+
+    const [validated, setValidated] = useState(false);
+    const [selectedEntity, setSelectedEntity] = useState<ReservationRequest>(location.state ||  defaultReservationRequest);
+    const [businessInfo, setBusinessInfo] = useState<BusinessInfo>(defaultBusinessInfo);
+    const [disabledSlots, setDisabledSlots] = useState<string[]>([]);
+    const [timePickerKey, setTimePickerKey] = useState(0);
+    
     const handleDateChange = (date: Date | null) => {
         if (date) {
-            setSelectedEntity({ ...selectedEntity, date: new Date(date) });
+
+            var _date = new Date(date);
+
+            postGetBusinessDisabledTimeSlots({businessId: businessInfo.id, partySize: selectedEntity.partySize, date: _date}).then(data => {
+
+
+                setDisabledSlots(data);
+                setSelectedEntity({ ...selectedEntity, date: _date, time: getFirstAvailableTimeSlot(businessInfo, data) });
+
+            });
         }
     };
+
+    const datePickerProps: MyDatePickerProps = {
+        selectedDate: selectedEntity.date ? new Date(selectedEntity.date) : new Date(2025, 1, 17),
+        disabledDates: [new Date(2025, 15, 2)],
+        onDateSelect: handleDateChange,
+    };
+    
+    const [getBusinessDisabledTimeSlotsRequest, setGetBusinessDisabledTimeSlotsRequest] = useState<GetBusinessDisabledTimeSlotsRequest>({ businessId: businessInfo.id, partySize: selectedEntity.partySize, date: datePickerProps.selectedDate ?? new Date() });
 
     const handleTimeSlotPickerChange = (time: string | null) => {
         if (time) {
@@ -53,7 +77,18 @@ function EditReservation() {
 
     const handlePartySizeChange = (event: ChangeEvent<HTMLSelectElement>) => {
         const value = event.target.value;
-        setSelectedEntity({ ...selectedEntity, partySize: parseInt(value) });
+
+        var _partySize = parseInt(value);
+        setSelectedEntity({ ...selectedEntity, partySize: _partySize });
+
+        postGetBusinessDisabledTimeSlots({businessId: businessInfo.id, partySize: _partySize, date: selectedEntity.date}).then(data => {
+
+            setDisabledSlots(data);
+
+            setSelectedEntity({ ...selectedEntity, partySize: _partySize, time: getFirstAvailableTimeSlot(businessInfo, data) });
+
+            // setSelectedEntity({...selectedEntity, time: getFirstAvailableTimeSlot(businessInfo, data)});
+        });
     };
 
 
@@ -87,19 +122,19 @@ function EditReservation() {
     };
 
 
-    const datePickerProps: MyDatePickerProps = {
-        selectedDate: selectedEntity.date ? new Date(selectedEntity.date) : new Date(2025, 1, 17),
-        disabledDates: [new Date(2025, 15, 2)],
-        onDateSelect: handleDateChange,
-    };
+    const getFirstAvailableTimeSlot = (businessInfo: BusinessInfo, disabledSlots: string[]) => 
+    {
+        const availableDates = businessInfo.timeSlots.filter(date => !disabledSlots.includes(date));
 
+        return availableDates[0];
+    }
 
     const drawTimePickerComponent = () => {
         return (
             <TimeSlotPicker
                 key={timePickerKey}
                 timeSlots={businessInfo.timeSlots}
-                disabledSlots={businessInfo.disabledSlots}
+                disabledSlots={disabledSlots}
                 highlightedSlot={selectedEntity.time}
                 onTimeSelect={handleTimeSlotPickerChange}
             />
@@ -111,7 +146,17 @@ function EditReservation() {
             // getPersonById(parsedId).then((data) => setSelectedEntity(data));
         }
 
-        getBusinessInfo(parsedBusinessName).then(data => setBusinessInfo(data));
+        getBusinessInfo(parsedBusinessName).then(data => {
+            setBusinessInfo(data);
+
+
+            postGetBusinessDisabledTimeSlots(getBusinessDisabledTimeSlotsRequest).then(slots => {
+                setDisabledSlots(slots)
+    
+                setSelectedEntity({...selectedEntity, time: getFirstAvailableTimeSlot(data, slots)});
+            });
+        });
+
     }, [parsedId]);
 
     return (
@@ -166,7 +211,7 @@ function EditReservation() {
                                     <Form.Label className='centered'>Time</Form.Label>
                                     <select className="form-select" aria-label="Time" onChange={handleTimeSlotDropDownChange}>
                                     {businessInfo.timeSlots.map((t) => (
-                                            <option key={t} selected={selectedEntity.time == t} value={t} disabled={businessInfo.disabledSlots.includes(t)}>
+                                            <option key={t} selected={selectedEntity.time == t} value={t} disabled={disabledSlots.includes(t)}>
                                                 {t}
                                             </option>
                                         ))}

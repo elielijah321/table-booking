@@ -30,9 +30,9 @@ export interface IconProps {
 }
 
 export interface BusinessInfo {
+  id: string;
   businessName: string;
   businessOfferings: Offering[];
   partySizes: number[];
   timeSlots: string[];
-  disabledSlots: string[];
 }

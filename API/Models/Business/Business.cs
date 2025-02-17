@@ -8,7 +8,6 @@ namespace Project.Function
         public IEnumerable<BusinessOffering> BusinessOfferings { get; set; }
         public IEnumerable<int> PartySizes { get; set; }
         public IEnumerable<string> TimeSlots { get; set; }
-        public IEnumerable<string> DisabledSlots { get; set; }
     }
 
     public class BusinessOffering : BaseEntity

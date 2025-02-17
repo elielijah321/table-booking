@@ -21,8 +21,7 @@ namespace Project.Function
             // var data = RepositoryWrapper.GetRepo().GetReservationById(id);
 
             var partySizes = GeneratePartySizes();
-            var timeSlots = GenerateTimeSlots("12:00", "21:15", 15);
-            var disabledSlots = new List<string>(){"12:00", "14:00"};
+            var timeSlots = GenerateTimeSlots("13:00", "22:30", 15);
 
             var data = new Business();
 
@@ -31,13 +30,12 @@ namespace Project.Function
             { 
                 new BusinessOffering() 
                 { 
-                    Name = "Deposit...", 
+                    Name = "Deposit", 
                     PricePerPerson = 20 
                 }
             };
             data.PartySizes = partySizes;
             data.TimeSlots = timeSlots;
-            data.DisabledSlots = disabledSlots;
 
             return new OkObjectResult(data);
         }
@@ -74,7 +72,6 @@ namespace Project.Function
             }
 
             return partySizes;
-
         }
     }
 }
