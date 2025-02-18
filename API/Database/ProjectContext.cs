@@ -30,6 +30,7 @@ namespace Project.Function
             base.OnModelCreating(modelBuilder);
         }
 
+        public DbSet<Business> Businesses { get; set; }
         public DbSet<Reservation> Reservations { get; set; }
     }
 }

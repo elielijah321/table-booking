@@ -24,65 +24,81 @@ namespace Project.Function
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             var data = JsonConvert.DeserializeObject<GetBusinessDisabledTimeSlotsRequest>(requestBody);
 
-            var reservations = GetReservations();
+            var business = RepositoryWrapper.GetRepo().GetBusinessById(data.BusinessId);
 
-            var result = GetOverbookedTimes(reservations, data.PartySize);
+
+            var reservations = GetReservations(data.BusinessId);
+
+            var result = GetOverbookedTimes(reservations, data.PartySize, business.MaxCapacity);
 
             return new OkObjectResult(result);
         }
 
 
-        private static List<Reservation> GetReservations()
+        private static List<Reservation> GetReservations(string businessId)
         {
             List<Reservation> reservations = new List<Reservation>
             {
-                new Reservation { PartySize = 1, ReservationDate = DateTime.Today.AddHours(13) }, // 14:00
-                new Reservation { PartySize = 1, ReservationDate = DateTime.Today.AddHours(13) }, // 14:00
-                new Reservation { PartySize = 1, ReservationDate = DateTime.Today.AddHours(13).AddMinutes(15) }, // 14:00
-                new Reservation { PartySize = 1, ReservationDate = DateTime.Today.AddHours(13).AddMinutes(15) }, // 14:00
-                new Reservation { PartySize = 2, ReservationDate = DateTime.Today.AddHours(14) }, // 14:00 (Duplicate)
-                new Reservation { PartySize = 3, ReservationDate = DateTime.Today.AddHours(16) }, // 16:00
-                new Reservation { PartySize = 3, ReservationDate = DateTime.Today.AddHours(16) }, // 16:00
-                new Reservation { PartySize = 3, ReservationDate = DateTime.Today.AddHours(16) }, // 16:00
+                new Reservation { PartySize = 1, ReservationDate = DateTime.Today.AddHours(13) }, 
+                new Reservation { PartySize = 1, ReservationDate = DateTime.Today.AddHours(13).AddMinutes(15) },
+                new Reservation { PartySize = 2, ReservationDate = DateTime.Today.AddHours(13).AddMinutes(15) },
             };
             return reservations;
         }
 
-       static List<string> GetOverbookedTimes(List<Reservation> reservations, int partySize)
-        {
-            var maxBookings = new Dictionary<int, int>
-            { // Party size, Max bookings
-                { 1, 2 },  
-                { 2, 2 },  
-                { 3, 2 },  
-                { 4, 2 },  
-                { 5, 2 },  
-                { 6, 2 },  
-                { 7, 2 },  
-                { 8, 2 },  
-                { 9, 2 },  
-                { 10, 2 },  
-                { 11, 2 },  
-                { 12, 2 },  
-                { 13, 2 },  
-                { 14, 2 },  
-                { 15, 2 },  
-                { 16, 2 },  
-                { 17, 2 },  
-                { 18, 2 },  
-                { 19, 2 },  
-                { 20, 2 },  
-            };
 
-            // Get reservations matching the given party size
-            var filteredReservations =  reservations
-                .Where(r => r.PartySize == partySize) // Only check for the given party size
-                .GroupBy(r => r.ReservationDate.ToString("yyyy-MM-dd HH:mm")) // Group by exact time
-                .Where(g => g.Count() >= maxBookings[partySize]) // Check if over limit
-                .Select(g => g.Key.Split(' ')[1]) // Extract only the HH:mm part
-                .ToList();
+    static List<string> GetOverbookedTimes(List<Reservation> reservations, int partySize, int maxCapacity)
+    {
+        var overbookedTimes = reservations
+            .GroupBy(r => r.ReservationDate.ToString("yyyy-MM-dd HH:mm")) // Group by exact time
+            .Where(g => g.Sum(r => r.PartySize) + partySize > maxCapacity) // Check if adding partySize exceeds capacity
+            .Select(g => g.Key.Split(' ')[1]) // Extract only the HH:mm part
+            .ToList();
 
-            return filteredReservations;
-        }
+        return overbookedTimes;
     }
+    
+
+    //    static List<string> GetOverbookedTimes(List<Reservation> reservations, int partySize)
+    //     {
+    //         var maxBookings = new Dictionary<int, int>
+    //         { // Party size, Max bookings
+    //             { 1, 2 },  
+    //             { 2, 2 },  
+    //             { 3, 2 },  
+    //             { 4, 2 },  
+    //             { 5, 2 },  
+    //             { 6, 2 },  
+    //             { 7, 2 },  
+    //             { 8, 2 },  
+    //             { 9, 2 },  
+    //             { 10, 2 },  
+    //             { 11, 2 },  
+    //             { 12, 2 },  
+    //             { 13, 2 },  
+    //             { 14, 2 },  
+    //             { 15, 2 },  
+    //             { 16, 2 },  
+    //             { 17, 2 },  
+    //             { 18, 2 },  
+    //             { 19, 2 },  
+    //             { 20, 2 },  
+    //         };
+
+    //         // Get reservations matching the given party size
+    //         var filteredReservations =  reservations
+    //             .Where(r => r.PartySize == partySize) // Only check for the given party size
+    //             .GroupBy(r => r.ReservationDate.ToString("yyyy-MM-dd HH:mm")) // Group by exact time
+    //             .Where(g => g.Count() >= maxBookings[partySize]) // Check if over limit
+    //             .Select(g => g.Key.Split(' ')[1]) // Extract only the HH:mm part
+    //             .ToList();
+
+    //         return filteredReservations;
+    //     }
+    
+    
+    
+    }
+
+
 }

@@ -33,6 +33,6 @@ export interface BusinessInfo {
   id: string;
   businessName: string;
   businessOfferings: Offering[];
-  partySizes: number[];
+  maxCapacity: number;
   timeSlots: string[];
 }

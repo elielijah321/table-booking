@@ -6,7 +6,7 @@ namespace Project.Function
     {
         public string BusinessName { get; set; }
         public IEnumerable<BusinessOffering> BusinessOfferings { get; set; }
-        public IEnumerable<int> PartySizes { get; set; }
+        public int MaxCapacity { get; set; }
         public IEnumerable<string> TimeSlots { get; set; }
     }
 

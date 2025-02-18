@@ -78,12 +78,11 @@ const ConfirmReservation: React.FC = () => {
   return (
     <div className="booking-container">
       <h1 className="booking-title">You're almost done!</h1>
+      <h3 className="booking-title">Tola</h3>
       
       <div className="booking-header">
-        <div className="restaurant-name">{selectedEntity.name}</div>
-
-        <div className="restaurant-info">
-          <div className="booking-details float-right">
+        {/* <div className="restaurant-info">
+          <div className="booking-details">
             <div className="booking-detail">
               <CalendarIcon />
               <span>{getShortDateFornat(selectedEntity.reservation.date)}</span>
@@ -97,11 +96,43 @@ const ConfirmReservation: React.FC = () => {
               <span>{selectedEntity.reservation.partySize} people</span>
             </div>
           </div>
+        </div> */}
+
+        <div className="booking-actions">
+          <div className="booking-details">
+              <div className="booking-detail">
+                <CalendarIcon />
+                <span>{getShortDateFornat(selectedEntity.reservation.date)}</span>
+              </div>
+              <div className="booking-detail">
+                <ClockIcon />
+                <span>{selectedEntity.reservation.time}</span>
+              </div>
+              <div className="booking-detail">
+                <UsersIcon />
+                <span>{selectedEntity.reservation.partySize} people</span>
+              </div>
+            </div>
         </div>
-      </div>
+
+          <div className="booking-actions">
+            <a className='reservation-cancel-button' onClick={handleCancel} rel="noreferrer">
+              Edit reservation
+            </a>
+          </div>
+        </div>
+
+        {/* Wrap both booking details & edit button */}
+        {/* <div className="booking-actions">
+          <a className='reservation-action-button reservation-cancel-button' onClick={handleCancel} rel="noreferrer">
+            Edit reservation
+          </a>
+        </div>
+      </div> */}
+
 
       <div className="timer-alert">
-        <p>We're holding this reservation for you for <strong><CountdownTimer minutes={1} redirectTo={previousPageLink} /></strong> minutes</p>
+        <p>We're holding this reservation for you for <strong><CountdownTimer minutes={5} redirectTo={previousPageLink} /></strong> minutes</p>
       </div>
 
       <section className="section">
@@ -146,7 +177,6 @@ const ConfirmReservation: React.FC = () => {
       </section>
 
     <section className="section">
-        <a className='reservation-action-button reservation-cancel-button' onClick={handleCancel} rel="noreferrer">Edit reservation</a>
         
         <Button disabled={formIsInvalid} variant='success' className="reservation-action-button reservation-confirm-button" onClick={handleContinueToPayment}  >
             Continue to payment

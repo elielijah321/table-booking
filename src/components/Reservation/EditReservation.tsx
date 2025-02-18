@@ -22,7 +22,7 @@ function EditReservation() {
         businessName: "Loading...", // Default placeholder values
         businessOfferings: [],
         timeSlots: [],
-        partySizes: []
+        maxCapacity: 0
     };
 
     const defaultReservationRequest = {
@@ -59,7 +59,7 @@ function EditReservation() {
         onDateSelect: handleDateChange,
     };
     
-    const [getBusinessDisabledTimeSlotsRequest, setGetBusinessDisabledTimeSlotsRequest] = useState<GetBusinessDisabledTimeSlotsRequest>({ businessId: businessInfo.id, partySize: selectedEntity.partySize, date: datePickerProps.selectedDate ?? new Date() });
+    const [getBusinessDisabledTimeSlotsRequest] = useState<GetBusinessDisabledTimeSlotsRequest>({ businessId: businessInfo.id, partySize: selectedEntity.partySize, date: datePickerProps.selectedDate ?? new Date() });
 
     const handleTimeSlotPickerChange = (time: string | null) => {
         if (time) {
@@ -141,6 +141,16 @@ function EditReservation() {
         );
     }
 
+    const drawPartySizeSelectOptions = (maxCapacity: number) => {
+        return Array.from({ length: maxCapacity }, (_, i) => i + 1).map((ps) => (
+            <option key={ps} selected={selectedEntity.partySize === ps} value={ps}>
+                {ps > 1 ? `${ps} people` : '1 person'}
+            </option>
+        ));
+    };
+
+
+
     useEffect(() => {
         if (parsedId !== "new") {
             // getPersonById(parsedId).then((data) => setSelectedEntity(data));
@@ -187,11 +197,7 @@ function EditReservation() {
                                 <Form.Group controlId="formPartySize">
                                     <Form.Label className="centered">Party Size</Form.Label>
                                     <select className="form-select" aria-label="Time" onChange={handlePartySizeChange}>
-                                        {businessInfo.partySizes?.map((ps) => (
-                                            <option key={ps} selected={selectedEntity.partySize == ps} value={ps}>
-                                                {ps > 1 ? `${ps} people` : '1 person'}
-                                            </option>
-                                        ))}
+                                        {drawPartySizeSelectOptions(businessInfo.maxCapacity)}
                                     </select>
                                 </Form.Group>
                             </Col>
