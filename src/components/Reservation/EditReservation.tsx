@@ -45,7 +45,6 @@ function EditReservation() {
 
             postGetBusinessDisabledTimeSlots({businessId: businessInfo.id, partySize: selectedEntity.partySize, date: _date}).then(data => {
 
-
                 setDisabledSlots(data);
                 setSelectedEntity({ ...selectedEntity, date: _date, time: getFirstAvailableTimeSlot(businessInfo, data) });
 

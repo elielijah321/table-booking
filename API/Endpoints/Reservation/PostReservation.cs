@@ -13,6 +13,7 @@ using AremuCoreServices.Helpers;
 using System.Collections.Generic;
 using AremuCoreServices.Models;
 using AremuCoreServices.Models.Enums;
+using AremuCoreServices.Models.CredentialRecords;
 // using AzureFunctions.Models;
 
 namespace Project.Function
@@ -40,6 +41,8 @@ namespace Project.Function
 
             var creds = TestHelper.GetStripeCredentialsRecord();
 
+            var newCreds = new StripeCredentialsRecord(creds.ApiKey, creds.Mode, creds.Currency, "http://localhost:5173/Tola/reservation/success", "http://localhost:5173/Tola/reservation/new/edit");
+
             var lineItems = new List<StripeLineItemRecord>();
 
             var productName = $"£{data.PricePerItem}.00 x {data.PartySize} guests";
@@ -49,7 +52,16 @@ namespace Project.Function
             var lineItem = new StripeLineItemRecord($"{productName}", total, 1);
             lineItems.Add(lineItem);
 
-            var stripeLink = StripeService.CreateCheckoutSession(creds, lineItems, new List<StripePaymentType>() { StripePaymentType.CARD });
+
+            var metadata = new Dictionary<string, string>()
+            {
+                {"OfferingId", "test123"},
+                {"Date", data.Date.ToString()},
+                {"Time", data.Time},
+                {"Party Size", data.PartySize.ToString()},
+            };
+
+            var stripeLink = StripeService.CreateCheckoutSession(newCreds, lineItems, StripePaymentType.CARD, metadata);
 
             var result = JsonConvert.SerializeObject(stripeLink);
 

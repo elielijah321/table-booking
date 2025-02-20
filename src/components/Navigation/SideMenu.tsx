@@ -11,6 +11,7 @@ import LoginPage from './Authentication/LoginPage';
 import PeoplePage from '../Reservation/ReservationsPage';
 import EditReservation from '../Reservation/EditReservation';
 import ConfirmReservation from '../Reservation/ConfirmReservation';
+import ReservationSuccess from '../Reservation/ReservationSuccess';
 
 const SideMenu: React.FC = () => {
   // const user = useSelector((state: RootState) => state.auth.user);
@@ -69,6 +70,8 @@ const SideMenu: React.FC = () => {
               <Route path="/:businessName/reservations" element={navigateToPageIfAuthenticated(<PeoplePage />)} />
               <Route path="/:businessName/reservation/:id/edit" element={navigateToPageIfAuthenticated(<EditReservation />)} />
               <Route path="/:businessName/reservation/:id/confirm" element={navigateToPageIfAuthenticated(<ConfirmReservation />)} />
+
+              <Route path="/:businessName/reservation/success/:id" element={navigateToPageIfAuthenticated(<ReservationSuccess />)} />
 
               <Route path="/login" element={<LoginPage />} />
               <Route path="/forgot-password" element={<ForgotPasswordPage />} />
