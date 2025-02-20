@@ -41,7 +41,19 @@ namespace Project.Function
 
             var creds = TestHelper.GetStripeCredentialsRecord();
 
-            var newCreds = new StripeCredentialsRecord(creds.ApiKey, creds.Mode, creds.Currency, "http://localhost:5173/Tola/reservation/success", "http://localhost:5173/Tola/reservation/new/edit");
+
+            bool isLocal = false;
+
+            if (Environment.GetEnvironmentVariable("isLocal") == null)
+            {
+                isLocal = true;
+            }
+
+            var domain = isLocal ? "http://localhost:5173" : "https://gentle-pond-0ecca781e.4.azurestaticapps.net";
+            var successUrl = $"{domain}/Tola/reservation/success";
+            var cancelUrl = $"{domain}/Tola/reservation/new/edit";
+
+            var newCreds = new StripeCredentialsRecord(creds.ApiKey, creds.Mode, creds.Currency, successUrl, cancelUrl);
 
             var lineItems = new List<StripeLineItemRecord>();
 
