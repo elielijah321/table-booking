@@ -464,7 +464,7 @@
 
 .footer {
     font-size: 14px;
-    color: #7f8c8d;
+    /* color: #7f8c8d; */
     margin-bottom: 20px;
 }
 
@@ -489,3 +489,10 @@
 }
 
 
+#root.confirmation-active {
+  background-color: #f4f4f9 !important; /* Light gray background for confirmation */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0rem !important;
+}

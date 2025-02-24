@@ -1,24 +1,26 @@
 import { useEffect, useState } from 'react'
 import { Accordion, Button, Table } from 'react-bootstrap';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { canEdit } from '../../helpers/UserHelper';
-import { Reservation } from '../../types/Reservation/Reservation';
-import { getAllReservations } from '../../functions/fetchEntities';
-import { getDisplayDateAndTime } from '../../helpers/DateHelper';
+import { BusinessInfo } from '../../types/Reservation/Reservation';
+import Loading from '../HelperComponents/Loading';
+import { getAllBusinesses } from '../../functions/fetchEntities';
 
-function ReservationsPage() {
+function BusinessesPage() {
 
   // const state = useSelector((state: RootState) => state.systemUser);
   // const systemUser = state.systemUser;
 
-  const [entities, setEntities] = useState<Reservation[] | undefined>(undefined);
+  const navigate = useNavigate();
+  const [entities, setEntities] = useState<BusinessInfo[] | undefined>(undefined);
 
-  const { businessName } = useParams();
-  const parsedBusinessName = businessName || '';
+  const handleEdit = (id: string) => {
+    navigate(`/business/${id}/edit`, { replace: true });
+  }
 
   useEffect(() => {
     // fetch data
-    getAllReservations(parsedBusinessName)
+    getAllBusinesses()
       .then(entities => setEntities(entities));
   }, [])
 
@@ -30,9 +32,9 @@ function ReservationsPage() {
             //systemUser
             canEdit() &&
             <div className='add-new-entity-btn'>
-                  <Link className="navitem" to={`/${parsedBusinessName}/reservation/new/edit`}>
+                  <Link className="navitem" to={`/business/new/edit`}>
                       <Button variant="primary" className="mb-3">
-                          Add Reservation
+                          Add Business
                       </Button>
                   </Link>
               </div>
@@ -52,35 +54,32 @@ function ReservationsPage() {
                             <Table striped hover responsive>
                               <thead>
                                   <tr>
-                                      <th>First Name</th>
-                                      <th>Date</th>
-                                      <th>Party Size</th>
-                                      <th>Phone Number</th>
-                                      <th>Notes</th>
+                                      <th>Name</th>
+                                      <th>Reservations</th>
+                                      <th>Max Capacity</th>
+                                      <th>Start Time</th>
+                                      <th>End Time</th>
                                       <th></th>
                                   </tr>
                               </thead>
                               <tbody>
-                                  {entities.map((_entity: Reservation) => {
+                                  {entities.map((_entity: BusinessInfo) => {
 
-
-                                    console.log("entity: ", _entity);
-                         
                                     return (
                                       <tr key={_entity.id}>
-                                          <td>{_entity.firstName} {_entity.lastName}</td>
-                                          <td>{getDisplayDateAndTime(_entity.reservationDate)}</td>
-                                          <td>{_entity.partySize}</td>
-                                          <td>{_entity.phoneNumber}</td>
-                                          <td>{_entity.notes}</td>
+                                          <td>{_entity.businessName}</td>
+                                          <td>{_entity.reservations.length}</td>
+                                          <td>{_entity.maxCapacity}</td>
+                                          <td>{_entity.startTime}</td>
+                                          <td>{_entity.endTime}</td>
                                           <td>
                                             {
-                                              <Button onClick={() => alert("")}>
+                                              <Button onClick={() => handleEdit(_entity.id)} variant="primary" className="mb-3">
                                                   Edit
                                               </Button>
                                             }
                                               
-                                          </td>
+                                          </td> 
                                       </tr>
                                   )
                                   })}
@@ -93,11 +92,11 @@ function ReservationsPage() {
             </Accordion>
           </div> 
         )
-        : <div>Business not found</div> }
+        : <Loading /> }
 
       </div>
     </>
   )
 }
 
-export default ReservationsPage;
+export default BusinessesPage;

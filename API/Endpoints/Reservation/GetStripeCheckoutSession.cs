@@ -8,6 +8,8 @@ using System;
 using AremuCoreServices.Helpers;
 using AremuCoreServices.Models.CredentialRecords;
 using AremuCoreServices;
+using Stripe.Checkout;
+using Project.Mappers;
 
 namespace Project.Function
 {
@@ -22,23 +24,32 @@ namespace Project.Function
 
             var creds = TestHelper.GetStripeCredentialsRecord();
 
-            var newCreds = new StripeCredentialsRecord(creds.ApiKey, creds.Mode, creds.Currency, "http://localhost:5173/Tola/reservation/success", "http://localhost:5173/Tola/reservation/new/edit");
+            var newCreds = new StripeCredentialsRecord(creds.ApiKey, creds.Mode, creds.Currency, "http://localhost:5173/ElijahSoftware/reservation/success", "http://localhost:5173/ElijahSoftware/reservation/new/edit");
 
+            var repo = RepositoryWrapper.GetRepo();
+
+            var existingReservation = repo.GetReservationByStripeCheckoutSession(id);
 
             var session = StripeService.GetStripeCheckoutSession(newCreds, id);
 
+            var request = session.ParseToReservationRequest();
 
+            var business = repo.GetBusinessByNameOrId(request.BusinessId.ToString());
 
-            ;
+            if (existingReservation == null)
+            {
+                repo.AddReservation(request);
+            }
 
+            var result = new ReservationSuccessModel
+            {
+                Name = session.CustomerDetails.Name,
+                ReservationDate = DateTime.Parse(session.Metadata["date"]),
+                Time = session.Metadata["time"],
+                BusinessName = business.BusinessName,
+            };
 
-            // Console.WriteLine($"Session ID: {session.Id}");
-            // Console.WriteLine($"Status: {session.Status}");
-            // Console.WriteLine($"Payment Intent: {session.PaymentIntentId}");
-            // Console.WriteLine($"Customer: {session.CustomerId}");
-
-            // return new OkObjectResult(data);
-            return new OkObjectResult(session);
+            return new OkObjectResult(result);
         }
     }
 }

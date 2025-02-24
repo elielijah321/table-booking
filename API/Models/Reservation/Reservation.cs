@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Project.Function
 {
@@ -11,5 +12,10 @@ namespace Project.Function
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
         public string Notes { get; set; }
+        public string OfferingId { get; set; }
+        public string StripeSessionId { get; set; }
+        
+        [ForeignKey("Business")]
+        public Guid BusinessId { get; set; }
     }
 }

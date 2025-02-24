@@ -5,7 +5,13 @@ export const getDisplayDateAndTime = (date?: Date) => {
     {
         var dateParts = getDateParts(date);
 
-        return `${dateParts[1]}`;
+
+        const time = dateParts[1];
+        const [hours, minutes] = time.split(':');
+        const formattedTime = `${hours}:${minutes}`;
+        console.log(formattedTime);
+
+        return `${dateParts[0]} @ ${formattedTime}`;
     }
 
     return '';
@@ -31,7 +37,13 @@ export const getShortDateFornat = (date: Date) => {
 
 const getDateParts = (date: Date) => {
 
-    var dateParts = new Date(date).toLocaleString("en-GB").split(", ");
+    var dateParts = new Date(date).toLocaleString("en-GB").split(",");
+
+
+    // dateParts[1] = dateParts[1].split(":")[1];
+    // dateParts[1] = dateParts[1].split(":").slice(0, 2).join(":");
+
+    //2025-02-22T15:27:43.225084
 
     return dateParts;
 
@@ -124,3 +136,30 @@ export const disableTyping = (e: any) => {
 
 }
 
+export const generateTimeSlots = (
+    startTime: string,
+    endTime: string,
+    intervalMinutes: number
+  ): string[] => {
+    const timeSlots: string[] = [];
+  
+    // Convert time strings to Date objects
+    const [startHours, startMinutes] = startTime.split(':').map(Number);
+    const [endHours, endMinutes] = endTime.split(':').map(Number);
+  
+    let current = new Date(0, 0, 0, startHours, startMinutes);
+    const end = new Date(0, 0, 0, endHours, endMinutes);
+  
+    while (current < end) {
+      const nextSlot = new Date(current.getTime() + intervalMinutes * 60000); // Add interval in ms
+      if (nextSlot > end) break;
+  
+      // Format time as HH:mm
+      const formattedTime = current.toTimeString().slice(0, 5);
+      timeSlots.push(formattedTime);
+  
+      current = nextSlot;
+    }
+  
+    return timeSlots;
+  }  

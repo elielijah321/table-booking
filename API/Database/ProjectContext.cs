@@ -18,7 +18,9 @@ namespace Project.Function
             base.OnConfiguring(optionsBuilder);
             optionsBuilder.EnableSensitiveDataLogging();
 
-            var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
+            var connectionString = "Server=tcp:tablebooking-mssqlserver-dev.database.windows.net,1433;Initial Catalog=tablebooking-sql-db-dev;Persist Security Info=False;User ID=missadministrator;Password=thisIsKat11;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
+            
+            //Environment.GetEnvironmentVariable("ConnectionString");
 
             optionsBuilder.UseSqlServer(connectionString);
         }

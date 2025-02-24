@@ -5,7 +5,7 @@ import { ReservationRequest } from '../../types/Reservation/ReservationRequest';
 import Loading from '../HelperComponents/Loading';
 import MyDatePicker, { MyDatePickerProps } from './DatePicker';
 import TimeSlotPicker from './TimeSlotPicker';
-import { BusinessInfo, RestaurantInfo } from '../../types/Reservation/Reservation';
+import { BusinessInfo, ReservationInfo } from '../../types/Reservation/Reservation';
 import { getBusinessInfo, postGetBusinessDisabledTimeSlots } from '../../functions/fetchEntities';
 import { GetBusinessDisabledTimeSlotsRequest } from '../../types/RequestModels/GetBusinessDisabledTimeSlotsRequest';
 
@@ -19,15 +19,24 @@ function EditReservation() {
 
     const defaultBusinessInfo: BusinessInfo = {
         id: "",
-        businessName: "Loading...", // Default placeholder values
+        businessName: "Loading...", 
+        businessType: "",
+        email: "",
+        phoneNumber: "",
+        address: "",
+        defaultOfferingName: "",
+        defaultOfferingPrice: 0,
         businessOfferings: [],
         timeSlots: [],
-        maxCapacity: 0
+        maxCapacity: 0,
+        reservations: [],
+        startTime: "",
+        endTime: "",
     };
 
     const defaultReservationRequest = {
         partySize: 1, 
-        date: new Date(2025, 1, 17), 
+        reservationDate: new Date(2025, 1, 17), 
         time: "9:00"
     } as ReservationRequest;
 
@@ -37,6 +46,7 @@ function EditReservation() {
     const [businessInfo, setBusinessInfo] = useState<BusinessInfo>(defaultBusinessInfo);
     const [disabledSlots, setDisabledSlots] = useState<string[]>([]);
     const [timePickerKey, setTimePickerKey] = useState(0);
+   
     
     const handleDateChange = (date: Date | null) => {
         if (date) {
@@ -46,19 +56,17 @@ function EditReservation() {
             postGetBusinessDisabledTimeSlots({businessId: businessInfo.id, partySize: selectedEntity.partySize, date: _date}).then(data => {
 
                 setDisabledSlots(data);
-                setSelectedEntity({ ...selectedEntity, date: _date, time: getFirstAvailableTimeSlot(businessInfo, data) });
+                setSelectedEntity({ ...selectedEntity, reservationDate: _date, time: getFirstAvailableTimeSlot(businessInfo, data) });
 
             });
         }
     };
 
     const datePickerProps: MyDatePickerProps = {
-        selectedDate: selectedEntity.date ? new Date(selectedEntity.date) : new Date(2025, 1, 17),
+        selectedDate: selectedEntity.reservationDate ? new Date(selectedEntity.reservationDate) : new Date(2025, 1, 17),
         disabledDates: [new Date(2025, 15, 2)],
         onDateSelect: handleDateChange,
     };
-    
-    const [getBusinessDisabledTimeSlotsRequest] = useState<GetBusinessDisabledTimeSlotsRequest>({ businessId: businessInfo.id, partySize: selectedEntity.partySize, date: datePickerProps.selectedDate ?? new Date() });
 
     const handleTimeSlotPickerChange = (time: string | null) => {
         if (time) {
@@ -80,7 +88,7 @@ function EditReservation() {
         var _partySize = parseInt(value);
         setSelectedEntity({ ...selectedEntity, partySize: _partySize });
 
-        postGetBusinessDisabledTimeSlots({businessId: businessInfo.id, partySize: _partySize, date: selectedEntity.date}).then(data => {
+        postGetBusinessDisabledTimeSlots({businessId: businessInfo.id, partySize: _partySize, date: selectedEntity.reservationDate}).then(data => {
 
             setDisabledSlots(data);
 
@@ -109,13 +117,12 @@ function EditReservation() {
             // if (hasBeenEdited) {
             // }
 
-              const restaurantInfo: RestaurantInfo = {
-                    name: businessInfo.businessName,
+              const reservationInfo: ReservationInfo = {
+                    businessInfo: businessInfo,
                     reservation: selectedEntity,
-                    offering: businessInfo.businessOfferings[0]
                 };
 
-            navigate(`/${parsedBusinessName}/reservation/new/confirm`, { replace: true , state: {restaurantInfo}});
+            navigate(`/${parsedBusinessName}/reservation/new/confirm`, { replace: true , state: {reservationInfo}});
         }
         setValidated(true);
     };
@@ -148,8 +155,6 @@ function EditReservation() {
         ));
     };
 
-
-
     useEffect(() => {
         if (parsedId !== "new") {
             // getPersonById(parsedId).then((data) => setSelectedEntity(data));
@@ -158,8 +163,13 @@ function EditReservation() {
         getBusinessInfo(parsedBusinessName).then(data => {
             setBusinessInfo(data);
 
+            var request: GetBusinessDisabledTimeSlotsRequest = {
+                businessId: data.id,
+                partySize: selectedEntity.partySize,
+                date: selectedEntity.reservationDate
+            };
 
-            postGetBusinessDisabledTimeSlots(getBusinessDisabledTimeSlotsRequest).then(slots => {
+            postGetBusinessDisabledTimeSlots(request).then(slots => {
                 setDisabledSlots(slots)
     
                 setSelectedEntity({...selectedEntity, time: getFirstAvailableTimeSlot(data, slots)});

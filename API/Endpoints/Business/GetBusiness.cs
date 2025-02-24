@@ -18,13 +18,9 @@ namespace Project.Function
         {
             log.LogInformation("GetBusiness function processed a request.");
 
-            var data = RepositoryWrapper.GetRepo().GetBusinessByName(name);
+            var data = RepositoryWrapper.GetRepo().GetBusinessByNameOrId(name);
 
             return new OkObjectResult(data);
         }
-
-
-        
-    
     }
 }

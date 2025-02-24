@@ -14,7 +14,6 @@ using System.Collections.Generic;
 using AremuCoreServices.Models;
 using AremuCoreServices.Models.Enums;
 using AremuCoreServices.Models.CredentialRecords;
-// using AzureFunctions.Models;
 
 namespace Project.Function
 {
@@ -31,50 +30,35 @@ namespace Project.Function
             var data = JsonConvert.DeserializeObject<UpdateReservationRequestModel>(requestBody);
             var repo = RepositoryWrapper.GetRepo();
 
-            if (data.Id == Guid.Empty)
-            {
-                // repo.AddPerson(data);
-            }else
-            {
-                // repo.UpdatePerson(data);
-            }
+            var business = repo.GetBusinessByNameOrId(data.BusinessId.ToString());
 
             var creds = TestHelper.GetStripeCredentialsRecord();
 
-
             bool isLocal = false;
 
-            if (Environment.GetEnvironmentVariable("isLocal") == null)
-            {
-                isLocal = true;
-            }
-
             var domain = isLocal ? "http://localhost:5173" : "https://gentle-pond-0ecca781e.4.azurestaticapps.net";
-            var successUrl = $"{domain}/Tola/reservation/success";
-            var cancelUrl = $"{domain}/Tola/reservation/new/edit";
+            var successUrl = $"{domain}/{business.BusinessName}/reservation/success";
+            var cancelUrl = $"{domain}/{business.BusinessName}/reservation/new/edit";
 
             var newCreds = new StripeCredentialsRecord(creds.ApiKey, creds.Mode, creds.Currency, successUrl, cancelUrl);
 
-            var lineItems = new List<StripeLineItemRecord>();
-
             var productName = $"£{data.PricePerItem}.00 x {data.PartySize} guests";
-
             var total = data.PricePerItem * data.PartySize;
 
+            var lineItems = new List<StripeLineItemRecord>();
             var lineItem = new StripeLineItemRecord($"{productName}", total, 1);
             lineItems.Add(lineItem);
 
-
             var metadata = new Dictionary<string, string>()
             {
-                {"OfferingId", "test123"},
-                {"Date", data.Date.ToString()},
-                {"Time", data.Time},
-                {"Party Size", data.PartySize.ToString()},
+                {"offeringId", "test123"},
+                {"date", data.ReservationDate.ToString()},
+                {"time", data.Time},
+                {"partySize", data.PartySize.ToString()},
+                {"businessId", data.BusinessId.ToString()},
             };
 
             var stripeLink = StripeService.CreateCheckoutSession(newCreds, lineItems, StripePaymentType.CARD, metadata);
-
             var result = JsonConvert.SerializeObject(stripeLink);
 
             return new OkObjectResult(result);

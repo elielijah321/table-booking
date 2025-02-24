@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Project.Function;
 
@@ -11,9 +12,10 @@ using Project.Function;
 namespace API.Migrations
 {
     [DbContext(typeof(ProjectContext))]
-    partial class ProjectContextModelSnapshot : ModelSnapshot
+    [Migration("20250223111813_Initial")]
+    partial class Initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -29,26 +31,11 @@ namespace API.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasDefaultValueSql("NEWID()");
 
-                    b.Property<string>("Address")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("BusinessName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BusinessType")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("DefaultOfferingName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long>("DefaultOfferingPrice")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Email")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("EndTime")
                         .HasColumnType("nvarchar(max)");
@@ -58,9 +45,6 @@ namespace API.Migrations
 
                     b.Property<int>("MaxCapacity")
                         .HasColumnType("int");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("StartTime")
                         .HasColumnType("nvarchar(max)");
@@ -148,8 +132,6 @@ namespace API.Migrations
                     b.HasKey("Id")
                         .HasName("PK__Reservation");
 
-                    b.HasIndex("BusinessId");
-
                     b.ToTable("Reservations", "dbo");
                 });
 
@@ -160,20 +142,9 @@ namespace API.Migrations
                         .HasForeignKey("BusinessId");
                 });
 
-            modelBuilder.Entity("Project.Function.Reservation", b =>
-                {
-                    b.HasOne("Project.Function.Business", null)
-                        .WithMany("Reservations")
-                        .HasForeignKey("BusinessId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Project.Function.Business", b =>
                 {
                     b.Navigation("BusinessOfferings");
-
-                    b.Navigation("Reservations");
                 });
 #pragma warning restore 612, 618
         }

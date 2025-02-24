@@ -13,18 +13,18 @@ using System.Linq;
 
 namespace Project.Function
 {
-    public static class GetAllReservations
+    public static class GetAllBusinesses
     {
-        [FunctionName("GetAllReservations")]
+        [FunctionName("GetAllBusinesses")]
         public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "GetAllReservations/{name}")] HttpRequest req,
-            string name, ILogger log)
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequest req,
+            ILogger log)
         {
-            log.LogInformation("GetAllReservations function processed a request.");
+            log.LogInformation("GetAllBusinesses function processed a request.");
 
             var repo = RepositoryWrapper.GetRepo();
 
-            var data = repo.GetBusinessByNameOrId(name).Reservations;
+            var data = repo.GetAllBusinesses();
 
             return new OkObjectResult(data);
         }

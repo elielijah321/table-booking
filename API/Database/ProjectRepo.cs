@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using Project.Function;
 using Project.Mappers;
 
@@ -26,89 +27,50 @@ namespace AzureFunctions.Database
             return entity.Id.ToString();
          }
 
-        public string UpdateBusinessRequestModel(UpdateBusinessRequestModel request)
+        public string UpdateBusiness(UpdateBusinessRequestModel request)
         {
             var entity = request.ToEntity();
             var entityToUpdate = _ctx.Businesses.FirstOrDefault(c => c.Id == entity.Id);
 
-            // entityToUpdate.Name = entity.Name;
+            entityToUpdate.BusinessName = entity.BusinessName;
+            entityToUpdate.Email = entity.Email;
+            entityToUpdate.PhoneNumber = entity.PhoneNumber;
+            entityToUpdate.BusinessType = entity.BusinessType;
+            entityToUpdate.DefaultOfferingName = entity.DefaultOfferingName;
+            entityToUpdate.DefaultOfferingPrice = entity.DefaultOfferingPrice;
+            entityToUpdate.Address = entity.Address;
+            entityToUpdate.MaxCapacity = entity.MaxCapacity;
+            entityToUpdate.StartTime = entity.StartTime;
+            entityToUpdate.EndTime = entity.EndTime;
+            entityToUpdate.Interval = entity.Interval;
 
             SaveAll();
 
             return entity.Id.ToString();
         }
 
-        public IEnumerable<Business> GetAllBusinesses()
+        public IEnumerable<UpdateBusinessResponseModel> GetAllBusinesses()
         {
-           return _ctx.Businesses;
-        }
-
-        public Business GetBusinessById(string id)
-        {
-        //    return GetAllBusinesses().FirstOrDefault(x => x.Id.ToString() == id);
-
-
-            return  GetTestBusiness("Elijah's Kitchen");
+           return _ctx.Businesses
+                  .Include(b => b.Reservations)
+                  .Include(b => b.BusinessOfferings)
+                  .Select(x => x.ToResponse());
         }
 
 
-        public Business GetBusinessByName(string name)
+         public UpdateBusinessResponseModel GetBusinessByNameOrId(string nameOrId)
         {
-            return GetTestBusiness(name);
-        //    return GetAllBusinesses().FirstOrDefault(x => x.Id.ToString() == name);
+           return GetAllBusinesses().FirstOrDefault(x => x.Id.ToString() == nameOrId || x.BusinessName.ToString() == nameOrId);
         }
-
-        private Business GetTestBusiness(string name)
-        {
-
-            var timeSlots = GenerateTimeSlots("13:00", "22:30", 15);
-
-            var data = new Business();
-
-            data.BusinessName = name;
-            data.BusinessOfferings = new List<BusinessOffering>()
-            { 
-                new BusinessOffering() 
-                { 
-                    Name = "Hair cut", 
-                    PricePerPerson = 15 
-                }
-            };
-            data.MaxCapacity = 5;
-            data.TimeSlots = timeSlots;
-
-
-            return data;
-
-        }
-
-        private static List<string> GenerateTimeSlots(string startTime, string endTime, int intervalMinutes)
-        {
-            List<string> timeSlots = new List<string>();
-
-            // Parse start and end times to TimeSpan
-            TimeSpan start = TimeSpan.Parse(startTime);
-            TimeSpan end = TimeSpan.Parse(endTime);
-            TimeSpan interval = TimeSpan.FromMinutes(intervalMinutes);
-
-            while (start < end)
-            {
-                TimeSpan nextSlot = start + interval;
-                if (nextSlot > end) break; // Stop if next slot exceeds end time
-
-                timeSlots.Add($"{start:hh\\:mm}");
-                start = nextSlot;
-            }
-
-            return timeSlots;
-        }
-    
-
 
         //Reservations
-         public string AddReservation(UpdateReservationRequestModel request)
+        public string AddReservation(UpdateReservationRequestModel request)
          {
             var entity = request.ToEntity();
+
+            var now = DateTime.Now;
+            entity.CreatedAt = now;
+            entity.UpdatedAt = now;
 
             _ctx.Reservations.Add(entity);
             SaveAll();
@@ -121,7 +83,17 @@ namespace AzureFunctions.Database
             var entity = request.ToEntity();
             var entityToUpdate = _ctx.Reservations.FirstOrDefault(c => c.Id == entity.Id);
 
-            // entityToUpdate.Name = entity.Name;
+            entityToUpdate.FirstName = entity.FirstName;
+            entityToUpdate.LastName = entity.LastName;
+            entityToUpdate.Email = entity.Email;
+            entityToUpdate.ReservationDate = entity.ReservationDate;
+            entityToUpdate.PartySize = entity.PartySize;
+            entityToUpdate.StripeSessionId = entity.StripeSessionId;
+            entityToUpdate.Notes = entity.Notes;
+            entityToUpdate.PhoneNumber = entity.PhoneNumber;
+            entityToUpdate.OfferingId = entity.OfferingId;
+            entityToUpdate.BusinessId = entity.BusinessId;
+            entityToUpdate.UpdatedAt = DateTime.Now;
 
             SaveAll();
 
@@ -138,8 +110,11 @@ namespace AzureFunctions.Database
            return GetAllReservations().FirstOrDefault(x => x.Id.ToString() == id);
         }
 
+        public Reservation GetReservationByStripeCheckoutSession(string id)
+        {
+           return GetAllReservations().FirstOrDefault(x => x.StripeSessionId.ToString() == id);
+        }
 
-        
 
         // Save
         private bool SaveAll()

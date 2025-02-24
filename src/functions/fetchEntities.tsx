@@ -1,7 +1,7 @@
 // import { Person } from "../types/People/Person";
 
 import { GetBusinessDisabledTimeSlotsRequest } from "../types/RequestModels/GetBusinessDisabledTimeSlotsRequest";
-import { BusinessInfo, CheckoutSession } from "../types/Reservation/Reservation";
+import { BusinessInfo, Reservation, ReservationSuccessModel } from "../types/Reservation/Reservation";
 import { ReservationRequest } from "../types/Reservation/ReservationRequest";
 
 
@@ -38,15 +38,44 @@ export const getTestFunction = async () => {
 }
 
 
+
+// Businesses
+export const getAllBusinesses = async () => {
+
+    const response = await fetch(`${domain}/GetAllBusinesses`, getGETOptions())
+                                        .then(response => response.json() as Promise<BusinessInfo[]>);
+
+
+    return response;
+}
+
+
+export const postBusiness = async (business: BusinessInfo) => {
+    const response = await fetch(`${domain}/PostBusiness`, getPOSTOptions(business))
+                                .then(response => response.json() as Promise<string>);
+
+    return response;
+}
+
+
+// Reservations
 export const postReservation = async (reservation: ReservationRequest) => {
     const response = await fetch(`${domain}/PostReservation`, getPOSTOptions(reservation)).then(response => response.json() as Promise<string>);
 
     return response;
 }
 
+export const getAllReservations = async (businessName: string) => {
+
+    const response = await fetch(`${domain}/GetAllReservations/${businessName}`, getGETOptions())
+                                        .then(response => response.json() as Promise<Reservation[]>);
+
+    return response;
+}
 
 export const postGetBusinessDisabledTimeSlots = async (request: GetBusinessDisabledTimeSlotsRequest) => {
-    const response = await fetch(`${domain}/GetBusinessDisabledTimeSlots`, getPOSTOptions(request)).then(response => response.json() as Promise<string[]>);
+    const response = await fetch(`${domain}/GetBusinessDisabledTimeSlots`, getPOSTOptions(request))
+                                    .then(response => response.json() as Promise<string[]>);
 
     return response;
 }
@@ -56,15 +85,12 @@ export const getBusinessInfo = async (businessName: string) => {
         .then(response => response.json() as Promise<BusinessInfo>);
 
     return response;
-
-
-
 }
 
 
 export const getStripeCheckoutSession = async (checkoutId: string) => {
     const response = await fetch(`${domain}/GetStripeCheckoutSession/${checkoutId}`, getGETOptions())
-        .then(response => response.json() as Promise<CheckoutSession>);
+        .then(response => response.json() as Promise<ReservationSuccessModel>);
 
     return response;
 }

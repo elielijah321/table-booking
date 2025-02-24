@@ -12,6 +12,8 @@ import PeoplePage from '../Reservation/ReservationsPage';
 import EditReservation from '../Reservation/EditReservation';
 import ConfirmReservation from '../Reservation/ConfirmReservation';
 import ReservationSuccess from '../Reservation/ReservationSuccess';
+import BusinessesPage from '../Business/BusinessesPage';
+import EditBusiness from '../Business/EditBusiness';
 
 const SideMenu: React.FC = () => {
   // const user = useSelector((state: RootState) => state.auth.user);
@@ -24,12 +26,13 @@ const SideMenu: React.FC = () => {
   const [activeIndex, setActiveIndex] = useState(0);
 
 
-  const usersPage = "Tola";
+  const usersPage = "ElijahSoftware";
 
   const menuItems = 
   [
       { name: 'Home', icon: NestBox, path: '/home' },
       { name: 'Reservations', icon: Money, path: `/${usersPage}/reservations` },
+      { name: 'Businesses', icon: Money, path: `/businesses` },
   ];
 
   const isAuthenticated = () => {
@@ -67,11 +70,13 @@ const SideMenu: React.FC = () => {
               <Route path="/" element={navigateToPageIfAuthenticated(<Home />)} />
               <Route path="/home" element={navigateToPageIfAuthenticated(<Home />)} />
 
-              <Route path="/:businessName/reservations" element={navigateToPageIfAuthenticated(<PeoplePage />)} />
-              <Route path="/:businessName/reservation/:id/edit" element={navigateToPageIfAuthenticated(<EditReservation />)} />
-              <Route path="/:businessName/reservation/:id/confirm" element={navigateToPageIfAuthenticated(<ConfirmReservation />)} />
+              <Route path="/businesses" element={navigateToPageIfAuthenticated(<BusinessesPage />)} />
+              <Route path="/business/:id/edit" element={<EditBusiness />} />
 
-              <Route path="/:businessName/reservation/success/:id" element={navigateToPageIfAuthenticated(<ReservationSuccess />)} />
+              <Route path="/:businessName/reservations" element={navigateToPageIfAuthenticated(<PeoplePage />)} />
+              <Route path="/:businessName/reservation/:id/edit" element={<EditReservation />} />
+              <Route path="/:businessName/reservation/:id/confirm" element={<ConfirmReservation />} />
+              <Route path="/:businessName/reservation/success/:id" element={<ReservationSuccess />} />
 
               <Route path="/login" element={<LoginPage />} />
               <Route path="/forgot-password" element={<ForgotPasswordPage />} />

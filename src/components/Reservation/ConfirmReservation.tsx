@@ -1,5 +1,5 @@
 import React, { ChangeEvent, useEffect, useState } from 'react';
-import { RestaurantInfo } from '../../types/Reservation/Reservation';
+import { ReservationInfo } from '../../types/Reservation/Reservation';
 import { Button, Col, Form, Row } from 'react-bootstrap';
 import { CalendarIcon, ClockIcon, UsersIcon } from '../Icons/Icons';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
@@ -18,11 +18,11 @@ const ConfirmReservation: React.FC = () => {
 
     const [previousPageLink] = useState<string>(`/${parsedBusinessName}/Reservation/new/edit`);
 
-    const [selectedEntity, setSelectedEntity] = useState<RestaurantInfo>(location.state.restaurantInfo);
+    const [selectedEntity, setSelectedEntity] = useState<ReservationInfo>(location.state.reservationInfo);
 
     const [formIsInvalid, setIsFormInvalid] = useState<boolean>(true);
 
-    const totalPrice = selectedEntity.offering.pricePerPerson * selectedEntity.reservation.partySize;
+    const totalPrice = selectedEntity.businessInfo.defaultOfferingPrice * selectedEntity.reservation.partySize;
 
     const handleCancel = async (event: any) => {
         event.preventDefault();
@@ -33,7 +33,8 @@ const ConfirmReservation: React.FC = () => {
     const handleContinueToPayment = async (event: any) => {
         event.preventDefault();
 
-        selectedEntity.reservation.pricePerItem = selectedEntity.offering.pricePerPerson;
+        selectedEntity.reservation.pricePerItem = selectedEntity.businessInfo.defaultOfferingPrice;
+        selectedEntity.reservation.businessId = selectedEntity.businessInfo.id;
 
         var checkoutUrl = await postReservation(selectedEntity.reservation);
 
@@ -48,7 +49,7 @@ const ConfirmReservation: React.FC = () => {
 
         var _reservation = selectedEntity.reservation;
 
-        _reservation.firstname = value;
+        _reservation.firstName = value;
 
         setSelectedEntity({ ...selectedEntity, reservation: _reservation });
     };
@@ -57,7 +58,7 @@ const ConfirmReservation: React.FC = () => {
         const value = event.target.value;
         var _reservation = selectedEntity.reservation;
 
-        _reservation.lastname = value;
+        _reservation.lastName = value;
 
         setSelectedEntity({ ...selectedEntity, reservation: _reservation });
     };
@@ -68,17 +69,17 @@ const ConfirmReservation: React.FC = () => {
         const isFormInvalid = () => {
             var _reservation = selectedEntity.reservation;
 
-            return ((_reservation.firstname?.length ?? 0) < 3 || (_reservation.lastname?.length ?? 0) < 3);
+            return ((_reservation.firstName?.length ?? 0) < 3 || (_reservation.lastName?.length ?? 0) < 3);
 
         };
-    
+
         setIsFormInvalid(isFormInvalid());
     }, [selectedEntity])
 
   return (
     <div className="booking-container">
       <h1 className="booking-title">You're almost done!</h1>
-      <h3 className="booking-title">Tola</h3>
+      <h3 className="booking-title">{parsedBusinessName}</h3>
       
       <div className="booking-header">
         {/* <div className="restaurant-info">
@@ -102,7 +103,7 @@ const ConfirmReservation: React.FC = () => {
           <div className="booking-details">
               <div className="booking-detail">
                 <CalendarIcon />
-                <span>{getShortDateFornat(selectedEntity.reservation.date)}</span>
+                <span>{getShortDateFornat(selectedEntity.reservation.reservationDate)}</span>
               </div>
               <div className="booking-detail">
                 <ClockIcon />
@@ -144,7 +145,7 @@ const ConfirmReservation: React.FC = () => {
                             type="text" 
                             placeholder="First Name" 
                             onChange={handleFirstNameChange} 
-                            value={selectedEntity.reservation.firstname} 
+                            value={selectedEntity.reservation.firstName} 
                             required
                             />
                 </Col>
@@ -154,7 +155,7 @@ const ConfirmReservation: React.FC = () => {
                             type="text" 
                             placeholder="Last Name" 
                             onChange={handleLastNameChange} 
-                            value={selectedEntity.reservation.lastname} 
+                            value={selectedEntity.reservation.lastName} 
                             required
                             />
                 </Col>
@@ -165,8 +166,8 @@ const ConfirmReservation: React.FC = () => {
         <h3 className="section-title">Booking summary</h3>
         <div className="experience-item">
           <div>
-            <p>{selectedEntity.offering.name} £{selectedEntity.offering.pricePerPerson}pp</p>
-            <p className="subtext">£{selectedEntity.offering.pricePerPerson} x {selectedEntity.reservation.partySize}</p>
+            <p>{selectedEntity.businessInfo.defaultOfferingName} £{selectedEntity.businessInfo.defaultOfferingPrice}pp</p>
+            <p className="subtext">£{selectedEntity.businessInfo.defaultOfferingPrice} x {selectedEntity.reservation.partySize}</p>
           </div>
           <span className="strong">£{totalPrice.toFixed(2)}</span>
         </div>

@@ -24,31 +24,27 @@ namespace Project.Function
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             var data = JsonConvert.DeserializeObject<GetBusinessDisabledTimeSlotsRequest>(requestBody);
 
-            var business = RepositoryWrapper.GetRepo().GetBusinessById(data.BusinessId);
+            var repo = RepositoryWrapper.GetRepo();
 
+            var business = repo.GetBusinessByNameOrId(data.BusinessId);
 
-            var reservations = GetReservations(data.BusinessId);
+            if (business == null)
+            {
+                return new NotFoundResult();
+            }
 
-            var result = GetOverbookedTimes(reservations, data.PartySize, business.MaxCapacity);
+            var result = GetOverbookedTimes(business.Reservations.Where(r => r.ReservationDate.Date == data.Date.Date), data.PartySize, business.MaxCapacity);
 
             return new OkObjectResult(result);
         }
 
-
-        private static List<Reservation> GetReservations(string businessId)
+    static List<string> GetOverbookedTimes(IEnumerable<Reservation> reservations, int partySize, int maxCapacity)
+    {
+        if (reservations == null)
         {
-            List<Reservation> reservations = new List<Reservation>
-            {
-                new Reservation { PartySize = 1, ReservationDate = DateTime.Today.AddHours(13) }, 
-                new Reservation { PartySize = 1, ReservationDate = DateTime.Today.AddHours(13).AddMinutes(15) },
-                new Reservation { PartySize = 2, ReservationDate = DateTime.Today.AddHours(13).AddMinutes(15) },
-            };
-            return reservations;
+            return new List<string>();
         }
 
-
-    static List<string> GetOverbookedTimes(List<Reservation> reservations, int partySize, int maxCapacity)
-    {
         var overbookedTimes = reservations
             .GroupBy(r => r.ReservationDate.ToString("yyyy-MM-dd HH:mm")) // Group by exact time
             .Where(g => g.Sum(r => r.PartySize) + partySize > maxCapacity) // Check if adding partySize exceeds capacity
@@ -57,7 +53,6 @@ namespace Project.Function
 
         return overbookedTimes;
     }
-    
 
     //    static List<string> GetOverbookedTimes(List<Reservation> reservations, int partySize)
     //     {
@@ -96,9 +91,5 @@ namespace Project.Function
     //         return filteredReservations;
     //     }
     
-    
-    
     }
-
-
 }
