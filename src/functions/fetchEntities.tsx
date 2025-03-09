@@ -6,7 +6,7 @@ import { ReservationRequest } from "../types/Reservation/ReservationRequest";
 
 
 
-const domain = "https://tablebooking-functionapp-prod.azurewebsites.net/api"; 
+const domain = "https://carribean-functionapp-dev.azurewebsites.net/api"; 
 // const domain = "http://localhost:7071/api";
 
 const getHeaders = () => {
