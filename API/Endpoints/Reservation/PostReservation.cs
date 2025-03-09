@@ -30,7 +30,7 @@ namespace Project.Function
             var data = JsonConvert.DeserializeObject<UpdateReservationRequestModel>(requestBody);
             var repo = RepositoryWrapper.GetRepo();
 
-            var business = repo.GetBusinessByNameOrId(data.BusinessId.ToString());
+            var business = repo.GetBusinessByAttribute(data.BusinessId.ToString());
 
             var creds = TestHelper.GetStripeCredentialsRecord();
 

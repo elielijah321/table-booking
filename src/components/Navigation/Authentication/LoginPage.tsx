@@ -6,13 +6,38 @@ import './Authentication.css';
 import ToastMessage, { ToastMessageHandle } from '../../HelperComponents/Toast';
 import { showToast } from '../../../helpers/UserHelper';
 import logo from './logo.png';
+import { SystemUser } from '../../../types/SystemUser';
+import { useDispatch } from 'react-redux';
+import { setUserInfo } from '../../../../reducers/userReducer';
+import { getBusinessInfo } from '../../../functions/fetchEntities';
 
 
+function parseJwt (token: any) {
+  var base64Url = token.split('.')[1];
+  var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+  var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+  }).join(''));
+  return JSON.parse(jsonPayload);
+}
+
+const parseLoggenInUser = (idToken: any): SystemUser => {
+
+  const user: SystemUser = {
+    id: "",
+    username: idToken["cognito:username"],
+    name: idToken.email,
+    mail: idToken.email,
+    createdDate: undefined
+  };
+
+  return user;
+}
 
 const LoginPage = () => {
 
   const toastRef = useRef<ToastMessageHandle>(null);
-
+  const dispatch = useDispatch();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -28,7 +53,28 @@ const LoginPage = () => {
       if (session && typeof session.AccessToken !== 'undefined') {
         sessionStorage.setItem('accessToken', session.AccessToken);
         if (sessionStorage.getItem('accessToken')) {
-          window.location.href = '/home';
+
+          var idToken = parseJwt(sessionStorage.idToken.toString());
+          const systemUser = parseLoggenInUser(idToken);
+
+
+          getBusinessInfo(systemUser.mail).then((response) => {
+
+            console.log(response);
+
+            if(response){
+              // systemUser.id = response.id;
+
+              if (response.businessName === '') {
+                window.location.href = `/business/${response.id}/edit`;
+              }else{
+
+                window.location.href = `/${response.businessName}/reservations`;
+              }
+            }
+          }
+          );
+
         } else {
           console.error('Session token was not set properly.');
         }

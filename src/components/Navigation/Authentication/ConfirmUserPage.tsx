@@ -6,6 +6,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { confirmSignUp } from './authService';
 import { showToast } from '../../../helpers/UserHelper';
 import ToastMessage, { ToastMessageHandle } from '../../HelperComponents/Toast';
+import { postBusiness } from '../../../functions/fetchEntities';
+import { BusinessInfo } from '../../../types/Reservation/Reservation';
 
 const ConfirmUserPage = () => {
 
@@ -21,8 +23,31 @@ const ConfirmUserPage = () => {
     e.preventDefault();
     try {
       await confirmSignUp(email, confirmationCode);
-      showToast(toastRef, "Account confirmed successfully!\nSign in on next page.", true);
-      navigate('/login');
+
+
+      var businessInfo: BusinessInfo = {
+        id: "00000000-0000-0000-0000-000000000000",
+        businessName: "",
+        businessType: "",
+        email: email,
+        address: "",
+        phoneNumber: "",
+        defaultOfferingName: "",
+        defaultOfferingPrice: 0,
+        businessOfferings: [],
+        maxCapacity: 0,
+        startTime: "09:00",
+        endTime: "17:00",
+        interval: 60,
+        timeSlots: [],
+        reservations: []
+      };
+
+      postBusiness(businessInfo).then(() => {
+
+        showToast(toastRef, "Account confirmed successfully!\nSign in on next page.", true);
+        navigate('/login');
+      });
     } catch (error) {
       console.log(`Failed to confirm account: ${error}`);
       showToast(toastRef, "Failed to confirm account", false);

@@ -6,8 +6,8 @@ import { ReservationRequest } from "../types/Reservation/ReservationRequest";
 
 
 
-const domain = "https://tablebooking-functionapp-prod.azurewebsites.net/api"; 
-// const domain = "http://localhost:7071/api";
+// const domain = "https://tablebooking-functionapp-prod.azurewebsites.net/api"; 
+const domain = "http://localhost:7071/api";
 
 const getHeaders = () => {
    return  {
@@ -81,6 +81,7 @@ export const postGetBusinessDisabledTimeSlots = async (request: GetBusinessDisab
 }
 
 export const getBusinessInfo = async (businessName: string) => {
+
     const response = fetch(`${domain}/GetBusiness/${businessName}`, getGETOptions())
         .then(response => response.json() as Promise<BusinessInfo>);
 

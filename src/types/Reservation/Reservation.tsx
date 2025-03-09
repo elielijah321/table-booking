@@ -51,6 +51,7 @@ export interface BusinessInfo {
   maxCapacity: number;
   startTime: string;
   endTime: string;
+  interval: number
   timeSlots: string[];
   reservations: Reservation[];
 }

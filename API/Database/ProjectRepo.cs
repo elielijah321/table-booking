@@ -21,6 +21,10 @@ namespace AzureFunctions.Database
          {
             var entity = request.ToEntity();
 
+            var now = DateTime.Now;
+            entity.CreatedAt = now;
+            entity.UpdatedAt = now;
+
             _ctx.Businesses.Add(entity);
             SaveAll();
 
@@ -58,10 +62,10 @@ namespace AzureFunctions.Database
         }
 
 
-         public UpdateBusinessResponseModel GetBusinessByNameOrId(string nameOrId)
-        {
-           return GetAllBusinesses().FirstOrDefault(x => x.Id.ToString() == nameOrId || x.BusinessName.ToString() == nameOrId);
-        }
+      public UpdateBusinessResponseModel GetBusinessByAttribute(string value)
+      {
+         return GetAllBusinesses().FirstOrDefault(x => x.Id.ToString() == value || x.BusinessName.ToString() == value || x.Email.ToString() == value);
+      }
 
         //Reservations
         public string AddReservation(UpdateReservationRequestModel request)

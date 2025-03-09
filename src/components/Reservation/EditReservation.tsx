@@ -32,6 +32,7 @@ function EditReservation() {
         reservations: [],
         startTime: "",
         endTime: "",
+        interval: 0
     };
 
     const defaultReservationRequest = {

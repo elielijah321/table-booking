@@ -34,7 +34,7 @@ namespace Project.Function
 
             var request = session.ParseToReservationRequest();
 
-            var business = repo.GetBusinessByNameOrId(request.BusinessId.ToString());
+            var business = repo.GetBusinessByAttribute(request.BusinessId.ToString());
 
             if (existingReservation == null)
             {

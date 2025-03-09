@@ -14,9 +14,12 @@ import ConfirmReservation from '../Reservation/ConfirmReservation';
 import ReservationSuccess from '../Reservation/ReservationSuccess';
 import BusinessesPage from '../Business/BusinessesPage';
 import EditBusiness from '../Business/EditBusiness';
+import { RootState } from '../../../reducers/store';
+import { useSelector } from 'react-redux';
+import ConfirmUserPage from './Authentication/ConfirmUserPage';
 
 const SideMenu: React.FC = () => {
-  // const user = useSelector((state: RootState) => state.auth.user);
+  const user = useSelector((state: RootState) => state.auth.user);
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleMenu = () => {
@@ -25,13 +28,10 @@ const SideMenu: React.FC = () => {
 
   const [activeIndex, setActiveIndex] = useState(0);
 
-
-  const usersPage = "ElijahSoftware";
-
   const menuItems = 
   [
       { name: 'Home', icon: NestBox, path: '/home' },
-      { name: 'Reservations', icon: Money, path: `/${usersPage}/reservations` },
+      { name: 'Reservations', icon: Money, path: `/${user.name}/reservations` },
       { name: 'Businesses', icon: Money, path: `/businesses` },
   ];
 
@@ -80,6 +80,7 @@ const SideMenu: React.FC = () => {
 
               <Route path="/login" element={<LoginPage />} />
               <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+              <Route path="/confirm" element={<ConfirmUserPage />} />
           </Routes>
 
           <div className={`overlay ${isOpen ? 'open' : ''}`} onClick={toggleMenu} />

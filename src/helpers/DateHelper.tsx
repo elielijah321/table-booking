@@ -5,11 +5,9 @@ export const getDisplayDateAndTime = (date?: Date) => {
     {
         var dateParts = getDateParts(date);
 
-
         const time = dateParts[1];
         const [hours, minutes] = time.split(':');
         const formattedTime = `${hours}:${minutes}`;
-        console.log(formattedTime);
 
         return `${dateParts[0]} @ ${formattedTime}`;
     }

@@ -26,7 +26,7 @@ namespace Project.Function
 
             var repo = RepositoryWrapper.GetRepo();
 
-            var business = repo.GetBusinessByNameOrId(data.BusinessId);
+            var business = repo.GetBusinessByAttribute(data.BusinessId);
 
             if (business == null)
             {

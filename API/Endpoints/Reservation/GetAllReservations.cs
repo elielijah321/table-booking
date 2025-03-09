@@ -24,7 +24,7 @@ namespace Project.Function
 
             var repo = RepositoryWrapper.GetRepo();
 
-            var data = repo.GetBusinessByNameOrId(name).Reservations;
+            var data = repo.GetBusinessByAttribute(name).Reservations;
 
             return new OkObjectResult(data);
         }
