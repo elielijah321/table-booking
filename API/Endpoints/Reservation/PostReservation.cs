@@ -37,8 +37,8 @@ namespace Project.Function
             bool isLocal = false;
 
             var domain = isLocal ? "http://localhost:5173" : "https://gentle-pond-0ecca781e.4.azurestaticapps.net";
-            var successUrl = $"{domain}/{business.BusinessName}/reservation/success";
-            var cancelUrl = $"{domain}/{business.BusinessName}/reservation/new/edit";
+            var successUrl = $"{domain}/{business.BusinessName}/success";
+            var cancelUrl = $"{domain}/{business.BusinessName}";
 
             var newCreds = new StripeCredentialsRecord(creds.ApiKey, creds.Mode, creds.Currency, successUrl, cancelUrl);
 

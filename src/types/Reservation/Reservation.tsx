@@ -15,6 +15,12 @@ export interface Reservation {
     businessId: string;
 }
 
+// export interface ReservationRequest2 {
+//   partySize: number;
+//   reservationDate: Date,
+//   time: string,
+// }
+
 
 export interface ReservationSuccessModel {
   name: string;

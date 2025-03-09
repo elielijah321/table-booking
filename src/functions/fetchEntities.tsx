@@ -6,8 +6,8 @@ import { ReservationRequest } from "../types/Reservation/ReservationRequest";
 
 
 
-// const domain = "https://tablebooking-functionapp-prod.azurewebsites.net/api"; 
-const domain = "http://localhost:7071/api";
+const domain = "https://tablebooking-functionapp-prod.azurewebsites.net/api"; 
+// const domain = "http://localhost:7071/api";
 
 const getHeaders = () => {
    return  {
@@ -40,6 +40,8 @@ export const getTestFunction = async () => {
 
 
 // Businesses
+export const getAllBusinessesUrl = `${domain}/GetAllBusinesses`;
+
 export const getAllBusinesses = async () => {
 
     const response = await fetch(`${domain}/GetAllBusinesses`, getGETOptions())
@@ -78,6 +80,12 @@ export const postGetBusinessDisabledTimeSlots = async (request: GetBusinessDisab
                                     .then(response => response.json() as Promise<string[]>);
 
     return response;
+}
+
+export const getBusinessInfoUrl =  (businessName: string) => {
+
+    return `${domain}/GetBusiness/${businessName}`;
+
 }
 
 export const getBusinessInfo = async (businessName: string) => {

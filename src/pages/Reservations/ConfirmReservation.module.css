@@ -1,0 +1,108 @@
+/* booking.css */
+.bookingContainer {
+  max-width: 48rem;
+  margin: 0 auto;
+  padding: 1rem;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.bookingTitle {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.bookingHeader {
+  display: flex;
+  justify-content: space-between; /* Spread items apart */
+  align-items: flex-start; /* Align items to the top */
+  gap: 1rem;
+}
+
+
+.bookingActions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end; /* Align content to the right */
+  gap: 0.5rem;
+}
+
+.bookingDetails {
+  display: flex;
+  gap: 1rem;
+  color: #4B5563;
+}
+
+.bookingDetail {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+
+.reservationCancel {
+  color: black;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.reservationCancel:hover {
+  color: black;
+}
+
+.reservationConfirm {
+  background-color: #1d6219;
+  color: white;
+  float: right !important;
+  text-decoration: none;
+
+}
+
+.reservationAction {
+  margin-top: 30px !important;
+  /* margin-bottom: 10px !important; */
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+
+}
+
+.reservationConfirm:hover {
+  color: white;
+}
+
+.timerAlert {
+  background-color: #EFF6FF;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1.5rem;
+  margin-top: 10px;
+}
+
+.sectionTitle {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.experienceItem {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.subtext {
+  font-size: 0.875rem;
+  color: #4B5563;
+}
+
+.totalRow {
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid #E5E7EB;
+  padding-top: 1rem;
+  font-weight: 600;
+}

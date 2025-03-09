@@ -1,6 +1,6 @@
 // import { SystemUser } from "../types/SystemUser";
 
-import { ToastMessageHandle } from "../components/HelperComponents/Toast";
+// import { ToastMessageHandle } from "../components/HelperComponents/Toast";
 
 export const canEdit = () => {
     // user: SystemUser
@@ -10,10 +10,10 @@ export const canEdit = () => {
 }
 
 
-export const showToast = (toastRef: React.RefObject<ToastMessageHandle>, message: string, success: boolean) => {
-    if (toastRef.current) {
-        toastRef.current.setMessage(message);
-        toastRef.current.setSuccess(success);
-        toastRef.current.toggleShow();
-    }
-};
+// export const showToast = (toastRef: React.RefObject<ToastMessageHandle>, message: string, success: boolean) => {
+//     if (toastRef.current) {
+//         toastRef.current.setMessage(message);
+//         toastRef.current.setSuccess(success);
+//         toastRef.current.toggleShow();
+//     }
+// };
