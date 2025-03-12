@@ -48,12 +48,12 @@ const ConfirmReservation: React.FC = () => {
       entity.reservation.pricePerItem = selectedEntity.businessInfo.defaultOfferingPrice;
       entity.reservation.businessId = selectedEntity.businessInfo.id;
 
-        var checkoutUrl = await postReservation(selectedEntity.reservation);
+      var checkoutUrl = await postReservation(entity.reservation);
 
-        const link = document.createElement('a');
-        link.href = checkoutUrl;
-        document.body.appendChild(link);
-        link.click();
+      const link = document.createElement('a');
+      link.href = checkoutUrl;
+      document.body.appendChild(link);
+      link.click();
     }
 
     useEffect(() => {
