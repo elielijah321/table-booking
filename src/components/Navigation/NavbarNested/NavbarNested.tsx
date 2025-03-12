@@ -15,14 +15,14 @@ import classes from './NavbarNested.module.css';
 import { link } from 'fs';
 
 const mockdata = [
-  { label: 'Dashboard', icon: IconGauge, link: '/' },
+  { label: 'Home', icon: IconGauge, link: '/' },
   {
-    label: 'Market news',
+    label: 'All Businesses',
     icon: IconNotes,
     link: '/AllBusiness',
   },
-  { label: 'Analytics', icon: IconPresentationAnalytics, link: '/'  },
-  { label: 'Contracts', icon: IconFileAnalytics, link: '/'  },
+  { label: 'Elijah', icon: IconPresentationAnalytics, link: '/ElijahTest'  },
+  { label: 'Zoo', icon: IconFileAnalytics, link: '/Zoo1'  },
   { 
     label: 'Settings', 
     icon: IconAdjustments, 

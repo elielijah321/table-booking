@@ -3,7 +3,7 @@ import TableScrollArea, { TableProps } from '@/components/TableScrollArea/TableS
 import { useFetch } from '@mantine/hooks';
 import { BusinessInfo } from '@/types/Reservation/Reservation';
 import { getBusinessInfoUrl } from '@/functions/fetchEntities';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { getDisplayDateAndTime } from '@/helpers/DateHelper';
 
 
@@ -11,10 +11,12 @@ export function Reservations() {
 
   const navigate = useNavigate();
 
-  const { data, loading, error, refetch, abort } = useFetch<BusinessInfo>(getBusinessInfoUrl('ElijahTest'));
+  const { id, businessName } = useParams();
 
-  console.log(data);
+  const parsedId = id || '';
+  const parsedBusinessName = businessName || '';
 
+  const { data, loading, error, refetch, abort } = useFetch<BusinessInfo>(getBusinessInfoUrl(parsedBusinessName));
 
   const editBusiness = (id: string) => {
     navigate(`/Business/${id}`, { replace: true })
